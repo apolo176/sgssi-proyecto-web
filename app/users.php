@@ -1,5 +1,5 @@
 <?php
-$hostname = "db";
+  $hostname = "db";
   $username = "admin";
   $password = "test";
   $db = "database";
@@ -9,13 +9,7 @@ $hostname = "db";
     die("Database connection failed: " . $conn->connect_error);
   }
 
-    listUsers($conn);
-
-
-
-
-
-  function listUsers($conn){
+  function login($conn){
 
     $query = mysqli_query($conn, "SELECT * FROM usuarios")
       or die (mysqli_error($conn));
@@ -31,5 +25,5 @@ $hostname = "db";
   }
 
 
-  echo json_encode(listUsers($conn))
+  echo json_encode(login($conn))
   ?>

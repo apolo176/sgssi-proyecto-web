@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: db
--- Tiempo de generación: 16-09-2020 a las 16:37:17
--- Versión del servidor: 10.5.5-MariaDB-1:10.5.5+maria~focal
--- Versión de PHP: 7.4.9
+-- Tiempo de generación: 07-10-2025 a las 17:00:11
+-- Versión del servidor: 10.8.2-MariaDB-1:10.8.2+maria~focal
+-- Versión de PHP: 8.2.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,16 +29,21 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
-  `nombre` text NOT NULL
+  `usuario` text NOT NULL,
+  `nombre` text NOT NULL,
+  `dni` text NOT NULL,
+  `telefono` int(8) NOT NULL,
+  `fechaNacimiento` date NOT NULL,
+  `email` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre`) VALUES
-(1, 'mikel'),
-(2, 'aitor');
+INSERT INTO `usuarios` (`id`, `usuario`, `nombre`, `dni`, `telefono`, `fechaNacimiento`, `email`) VALUES
+(1, '', 'mikel', '', 0, '0000-00-00', ''),
+(2, '', 'aitor', '', 0, '0000-00-00', '');
 
 --
 -- Índices para tablas volcadas

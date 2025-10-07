@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GameDB</title>
+    <link rel="stylesheet" href="styles.css"> <!-- CSS -->
+    <script src="js/login.js" defer></script> <!-- Código que hará las comprobaciones -->
+</head>
+<body>
+    <h1>Iniciar sesión</h1>
+    <form id="login_form" onsubmit="submitForm(this); return false;">
+        <label for="username">Usuario:</label><br>
+        <input type="text" id="username" name="username" placeholder="Introduce tu usuario"><br>
+
+        <label for="password">Contraseña:</label><br>
+        <input type="password" id="password" name="password" placeholder="Introduce tu contraseña"><br>
+
+        <button id="login_submit" type="submit">Iniciar sesión</button>
+    </form>
+    <p>Si no tienes cuenta: <a href="register.html">Regístrate</a></p>
+</body>
+
+<footer>Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres</footer>
+
+</html>

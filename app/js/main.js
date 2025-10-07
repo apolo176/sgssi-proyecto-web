@@ -15,3 +15,16 @@ function listUsers() {
         .catch(error => console.error('Error:', error));
 }
 
+function submitForm(form)
+{
+    console.log("hey")
+    const data = new FormData(form)
+    const datos = Object.fromEntries(data.entries());
+    console.log(datos);
+
+     validateForm(data)
+}
+
+function validateForm(data){
+    console.log(Object.fromEntries(data))
+}
