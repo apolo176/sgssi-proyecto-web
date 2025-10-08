@@ -13,9 +13,9 @@
 <body>
     <h1>Registro de usuario</h1>
     <p>Rellena el siguiente formulario para registrarte en nuestra web:</p>
-    
-    <form onsubmit="submitForm(this); return false;">
-    
+
+    <form id="register_form" onsubmit="submitForm(this); return false;">
+
     <label for="nombreapellido">Nombre y apellidos:</label><br>
     <input name="nombreapellido" type="text" placeholder="Nombre y apellidos"><br>
 
@@ -26,15 +26,15 @@
     <input name="password" type="password" placeholder="Contraseña"><br>
 
     <label for="telefono">Teléfono:</label><br>
-    <input name="telefono" type="tel" placeholder="Teléfono: 685123456"><br>
+    <input name="telefono" type="text" placeholder="Teléfono: 685123456"><br>
 
     <label for="fechanac">Fecha de Nacimiento:</label><br>
     <input name="fechanac" type="text" placeholder="Fecha de Nacimiento"><br>
 
     <label for="email">Email:</label><br>
-    <input name="email" type="email" placeholder="Email: tuemail@dominio.com"><br>
+    <input name="email" type="text" placeholder="Email: tuemail@dominio.com"><br>
 
-    <button type="submit">Registrarse</button>
+    <button id="register_submit" type="submit">Registrarse</button>
     
     </form>
     <p>Si ya tienes cuenta: <a href="login.html">Inicia sesión</a></p>

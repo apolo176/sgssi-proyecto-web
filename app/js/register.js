@@ -1,19 +1,3 @@
-window.addEventListener('DOMContentLoaded', login);
-
-function login() {
-    fetch('register.php')
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = ''; // Limpiar tabla
-            data.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${user.id}</td><td>${user.nombre}</td>`;
-                tbody.appendChild(tr);
-            });
-        })
-        .catch(error => console.error('Error:', error));
-}
 
 function submitForm(formulario) {
     const datos = new FormData(formulario)
@@ -47,6 +31,16 @@ function submitForm(formulario) {
     if (!validacion) {
         return false;
     }
+
+    fetch('register.php', {
+        method: 'POST',
+        body: datos
+    })
+    .then(response => response.text())
+    .then(data => {
+        window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function validateNameAndSurname(datos) {
@@ -62,7 +56,7 @@ function validateNameAndSurname(datos) {
 }
 
 function validateDNI(datos) {
-    const dni = datos.get('dni').trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
+    const dni = datos.get('DNI').trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
     const expresionRegular = /^\d{8}-[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
     const letrasDNI = 'TRWAGMYFPDXBNJZSQVHLCKE'; //String que contiene las letras del DNI en el orden correcto
 
@@ -96,7 +90,7 @@ function validatePhone(datos) {
 }
 
 function validateBirthDate(datos) {
-    const fechaNacimiento = datos.get('fechanacimiento').trim();
+    const fechaNacimiento = datos.get('fechanac').trim();
     const expresionRegular = /^\d{4}-\d{2}-\d{2}$/; //Expresion regular que nos permite buscar fechas en formato aaaa-mm-dd
 
     if (!expresionRegular.test(fechaNacimiento)) {
@@ -109,7 +103,7 @@ function validateBirthDate(datos) {
 }
 function validateEmail(datos) {
     const email = datos.get('email').trim();
-    const expresionRegular = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{5,}$/; //Expresion regular que nos permite buscar un email válido (minimo 5 caracteres e@e.c)
+    const expresionRegular = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/; //Expresion regular que nos permite buscar un email válido (minimo 5 caracteres e@e.c)
 
     if (!expresionRegular.test(email)) { 
         window.alert('El email no es válido.');
