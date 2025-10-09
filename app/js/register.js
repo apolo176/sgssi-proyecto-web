@@ -45,7 +45,7 @@ function submitForm(formulario) {
 
 function validateNameAndSurname(datos) {
     const nombreYapellido = datos.get('nombreapellido').trim(); //Trim nos permite eliminar los espacios en blanco al inicio y al final del string
-    const expresionRegular = /^[a-zA-ZÀ-ÿ]{1,}\s[a-zA-ZÀ-ÿ]{1,}$/; //Expresion regular que nos permite buscar letras (mayusculas y minusculas) y mínimo 2 caracteres
+    const expresionRegular = /^[a-zA-ZÀ-ÿ]{1,}(?:\s[a-zA-ZÀ-ÿ]{1,}){1,}$/; //Expresion regular que nos permite buscar letras (mayusculas y minusculas) y mínimo 2 caracteres
 
     if (!expresionRegular.test(nombreYapellido)) { //Si el el string que almacena el nombre y apellido no cumple la expresión regular
         window.alert('El nombre y apellido no es válido. Debe contener solo letras y espacios, y tener entre minimo 2 caracteres.');
