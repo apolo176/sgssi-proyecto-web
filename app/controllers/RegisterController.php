@@ -8,7 +8,7 @@ class RegisterController
   {
     include __DIR__ . '/../views/register.html';
   }
-
+  
   public static function processForm()
   {
     $hostname = "db";
@@ -68,3 +68,7 @@ class RegisterController
   }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  RegisterController::processForm();
+}
+?>

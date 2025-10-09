@@ -32,7 +32,7 @@ function submitForm(formulario) {
         return false;
     }
 
-    fetch('app/controllers/RegisterController.php', {
+    fetch('/app/controllers/RegisterController.php', {
         method: 'POST',
         body: datos
     })

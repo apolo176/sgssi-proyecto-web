@@ -7,7 +7,7 @@ function submitForm(formulario) {
     if (!validacion) {
         return false; //Si la validación falla, no envía el formulario
     }
-    //Mismo tipo de validacion que el anterior pero con los demás campos
+    //Mismo tipo de validacion que el anterior pero con el email
     validacion = validateEmail(datos) 
 
     if (!validacion) {
