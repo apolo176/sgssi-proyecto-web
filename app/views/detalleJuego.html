@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles del videojuego</title>
+    <link rel="stylesheet" href="/app/styles.css"> <!-- enlazamos el CSS externo -->
+    <script src="/app/js/detalleJuego.js" defer></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Listado de videojuegos</h1>
+    <table id="tabla-detalle">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Género</th>
+                <th>Fecha de lanzamiento</th>
+                <th>Precio de salida (€)</th>
+                <th>Nota Metacritic</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se insertarán las filas -->
+        </tbody>
+    </table>
+</body>
+</html>

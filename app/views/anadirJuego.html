@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/app/js/anadirJuego.js"></script>
+
+    <link rel="stylesheet" href="/app/styles.css">
+    <title>SGSSI</title>
+</head>
+
+<body>
+    <h1>Añadir juego</h1>
+    <p>Rellena el siguiente formulario para añadir un nuevo juego:</p>
+
+    <form id="item_add_form" onsubmit="submitForm(this); return false;">
+
+    <label for="nombre">Nombre:</label><br>
+    <input name="nombre" type="text" placeholder="Nombre del juego"><br>
+
+    <label for="genero">Género:</label><br>
+    <input name="genero" type="text" placeholder="Sandbox"><br>
+
+    <label for="fechaLanzamiento">Fecha de Lanzamiento:</label><br>
+    <input name="fechaLanzamiento" type="text" placeholder="aaaa-mm-dd"><br>
+
+    <label for="precioSalida">Precio de Salida (€):</label><br>
+    <input name="precioSalida" type="text" placeholder="19.99"><br>
+
+    <label for="notaMetacritic">Nota Metacritic:</label><br>
+    <input name="notaMetacritic" type="text" placeholder="Nota de los usuarios"><br><br>
+
+    <button id="item_add_submit" type="submit">Añadir juego</button>
+
+    </form>
+
+</body>
+
+<br><footer>Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres</footer>
+
+</html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: db
--- Tiempo de generación: 08-10-2025 a las 21:28:42
+-- Tiempo de generación: 10-10-2025 a las 17:08:38
 -- Versión del servidor: 10.8.2-MariaDB-1:10.8.2+maria~focal
 -- Versión de PHP: 8.2.27
 
@@ -46,6 +46,29 @@ INSERT INTO `usuarios` (`id`, `usuario`, `nombre`, `dni`, `telefono`, `fechaNaci
 (1, '', 'mikel', '', 0, '0000-00-00', '', ''),
 (2, '', 'aitor', '', 0, '0000-00-00', '', '');
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `videojuegos`
+--
+
+CREATE TABLE `videojuegos` (
+  `id` int(11) NOT NULL,
+  `nombre` text NOT NULL,
+  `genero` text NOT NULL,
+  `fechaLanzamiento` date NOT NULL,
+  `precioSalida` decimal(11,2) NOT NULL,
+  `notaMetacritic` decimal(4,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `videojuegos`
+--
+
+INSERT INTO `videojuegos` (`id`, `nombre`, `genero`, `fechaLanzamiento`, `precioSalida`, `notaMetacritic`) VALUES
+(1, 'Minecraft', 'Sandbox', '2011-11-18', 19.95, 8.30),
+(2, 'Grand Theft Auto 5', 'Mundo abierto', '2013-09-17', 49.99, 8.50);
+
 --
 -- Índices para tablas volcadas
 --
@@ -57,6 +80,12 @@ ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `videojuegos`
+--
+ALTER TABLE `videojuegos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -64,6 +93,12 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `videojuegos`
+--
+ALTER TABLE `videojuegos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 

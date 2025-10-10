@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Juegos</title>
+    <link rel="stylesheet" href="/app/styles.css"> <!-- enlazamos el CSS externo -->
+    <script src="/app/js/listaVideojuegos.js" defer></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Listado de videojuegos</h1>
+    <table id="tabla-juegos">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <!-- Aquí se insertarán las filas -->
+        </tbody>
+    </table>
+
+    <div style="width:80%;margin:20px auto;text-align:center;">
+    <button 
+        id="anadirjuego" 
+        type="button" 
+        style="padding:10px 30px;font-size:1.1em;"
+        onclick="window.location.href='anadirJuego.html'">
+        Añadir juego
+    </button>
+</div>
+
+</body>
+
+<footer>Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres</footer>
+
+</html>
