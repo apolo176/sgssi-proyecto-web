@@ -4,23 +4,8 @@ function submitForm(formulario) {
 
     //Mismo tipo de validacion que el anterior pero con los demás campos
 
-    validacion = validateLaunchDate(datos)
-
-    if (!validacion) {
-        return false; 
-    }
-
-    validacion = validatePrice(datos) 
-
-    if (!validacion) {
+    if (!validateLaunchDate(datos) || !validatePrice(datos) || !validateMetacriticScore(datos)) 
         return false;
-    }
-
-    validacion = validateMetacriticScore(datos)
-
-    if (!validacion) {
-        return false;
-    }
 
     fetch('/app/controllers/AnadirJuegoController.php', {
         method: 'POST',
@@ -35,39 +20,57 @@ function submitForm(formulario) {
 
 
 function validateLaunchDate(datos) {
-    const fechaLanzamiento = datos.get('fechaLanzamiento').trim();
+    const fechaLanzamiento = (datos.get('fechaLanzamiento') || '').trim();
     const expresionRegular = /^\d{4}-\d{2}-\d{2}$/; //Expresion regular que nos permite buscar fechas en formato aaaa-mm-dd
 
     if (!expresionRegular.test(fechaLanzamiento)) {
         window.alert('La fecha de lanzamiento no es válida. Debe tener el formato aaaa-mm-dd.');
         return false;
     }
-    else {
-        return true;
+
+    const [anio, mes, dia] = fechaLanzamiento.split('-').map(Number); //Separa en 3 variables con desestructuración cada parte de la fecha
+    const fecha = new Date(anio, mes - 1, dia); 
+
+    if (fecha.getFullYear() !== anio || fecha.getMonth() + 1 !== mes /*+1 porque los meses van de 0 a 11 en JS */ || fecha.getDate() !== dia) { //Comprueba que la fecha válida automáticamente por JS y la que introduce el usuario son válidas
+        alert('La fecha de lanzamiento no es válida.');
+        return false;
     }
+
+    return true;
 }
 
 function validatePrice(datos) {
-    const precio = datos.get('precioSalida').trim();
-    const expresionRegular = /^\d+(\.\d{1,2})?$/; //Expresion regular que nos permite buscar un precio válido
+    const precio = (datos.get('precioSalida') || '').trim();
+
+    if (!precio) {
+        window.alert('El precio de salida no puede estar vacío.');
+        return false;
+    }
+
+    const expresionRegular = /^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/; //Expresion regular que nos permite buscar un precio válido
 
     if (!expresionRegular.test(precio)) {
         window.alert('El precio de salida no es válido. Debe ser un número positivo con hasta dos decimales.');
         return false;
     }
-    else {
-        return true;
-    }
+    
+    return true;
 }
 
 function validateMetacriticScore(datos) {
-    const notaMetacritic = datos.get('notaMetacritic').trim();
+    const notaMetacritic = (datos.get('notaMetacritic') || '').trim();
+    
+    if (!notaMetacritic) {
+        window.alert('La nota Metacritic no puede estar vacía.');
+        return false;
+    }
+
     const expresionRegular = /^(10(\.0{1,2})?|([0-9](\.[0-9]{1,2})?))$/;     // Expresión regular para número entre 0 y 10 con hasta 2 decimales
 
     if (!expresionRegular.test(notaMetacritic)) {
         window.alert('La nota Metacritic no es válida. Debe ser un número entre 0 y 10, con máximo 2 decimales.');
         return false;
-    } else {
-        return true; 
-    }  
+    } 
+    
+    return true;  
 }
