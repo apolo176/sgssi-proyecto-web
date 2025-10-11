@@ -1,20 +1,21 @@
 
 function submitForm(formulario) {
+
     const datos = new FormData(formulario)
 
-    validacion = validateNameAndSurname(datos) //Comprueba que el nombre y apellido son válidos
-
-    if (!validacion) {
-        return false; //Si la validación falla, no envía el formulario
-    }
     //Mismo tipo de validacion que el anterior pero con el email
     validacion = validateEmail(datos) 
 
     if (!validacion) {
         return false; 
     }
+    validacion = validatePassword(datos) 
 
-    fetch('LoginController.php', {
+    if (!validacion) {
+        return false; 
+    }
+
+    fetch('/login', {
         method: 'POST',
         body: datos
     })
@@ -37,3 +38,14 @@ function validateEmail(datos) {
         return true;
     }
 }
+function validatePassword(datos) {
+    const password = datos.get('password').trim();
+
+    if (password === "") {
+        window.alert('La contraseña no puede estar vacía.');
+        return false;
+    } else {
+        return true;
+    }
+}
+

@@ -18,11 +18,18 @@ class LoginController
 
     $conn = new mysqli($hostname, $username, $password, $db);
     if ($conn->connect_error) {
-      die("Database connection failed: " . $conn->connect_error);
+      error_log("DB connection failed: " . $conn->connect_error);
+      echo "Error interno, inténtalo más tarde.";
+      return;
     }
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    if (empty($email) || empty($password)) {
+      echo "Por favor completa todos los campos.";
+      return;
+    }
 
     self::login($conn, $email, $password);
     $conn->close();
@@ -30,20 +37,26 @@ class LoginController
 
   private static function login($conn, $email, $password)
   {
-    $sql = "SELECT U.EMAIL FROM usuarios AS U WHERE U.EMAIL = '$email' AND U.CONTRASENA = '$password'";
-    $resultado = $conn->query($sql);
-    if (!$resultado) {
-      echo "Error en la consulta SQL: " . $conn->error;
-      return;
+    $stmt = $conn->prepare("SELECT CONTRASENA FROM usuarios WHERE EMAIL = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+      if (password_verify($password, $row['CONTRASENA'])) {
+        echo "Login exitoso";
+      } else {
+        echo "Contraseña incorrecta";
+      }
+    } else {
+      echo "Usuario no encontrado";
     }
 
-    if ($resultado->num_rows > 0) {
-      echo "Login exitoso";
-      return;
-    } else {
-      echo "Error: Usuario o contraseña incorrectos";
-      return;
-    }
+    $stmt->close();
   }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  LoginController::processForm();
 }
 ?>

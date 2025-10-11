@@ -8,7 +8,12 @@ function submitForm(formulario) {
         return false; //Si la validación falla, no envía el formulario
     }
     //Mismo tipo de validacion que el anterior pero con los demás campos
-    validacion = validateDNI(datos) 
+    validacion = validateDNI(datos)
+
+    if (!validacion) {
+        return false; 
+    }
+    validacion = validatePassword(datos) 
 
     if (!validacion) {
         return false; 
@@ -76,6 +81,23 @@ function validateDNI(datos) {
         }
     }
 }
+function validatePassword(datos) {
+    const password = datos.get('password');
+    if (!password) {
+        window.alert('El campo de contraseña no existe en el formulario.');
+        return false;
+    }
+
+    const trimmedPassword = password.trim();
+
+    if (trimmedPassword === "") {
+        window.alert('La contraseña no puede estar vacía.');
+        return false;
+    }
+
+    return true;
+}
+
 
 function validatePhone(datos) {
     const telefono = datos.get('telefono').trim();
