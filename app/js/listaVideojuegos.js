@@ -22,9 +22,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 fila.innerHTML = `
                     <td>${juego.id}</td>
                     <td>
-                        <a href="/show_item?id=${juego.id}">${juego.nombre}</a>
+                        <a href="/show_item?item=${juego.id}">${juego.nombre}</a>
                     </td>
-                `;
+                    <td>
+                        ${juego.fechaLanzamiento}
+                    </td>
+                    <td>
+                        ${juego.precioSalida}
+                    </td>
+                    <td>
+                        ${juego.notaMetacritic}
+                    </td>
+                    <td>
+                        <a href="/show_item?item=${juego.id}" class="detalle-btn">👁️</a>
+                        <a href="/modify_item?item=${data.id}" class="detalle-btn">✏️</a>
+
+                    </td>                `;
                 tbody.appendChild(fila);
             });
         })
@@ -32,4 +45,5 @@ document.addEventListener('DOMContentLoaded', () => {
             const tbody = document.querySelector('#tabla-juegos tbody');
             tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${err.message}</td></tr>`;
         });
+        window.createProfileCircle()
 });

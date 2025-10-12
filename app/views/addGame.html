@@ -4,39 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/app/js/anadirJuego.js"></script>
+    <script src="/app/js/utils.js"></script>
 
+    <script src="/app/js/anadirJuego.js" defer></script>
     <link rel="stylesheet" href="/app/styles.css">
-    <title>SGSSI</title>
+    <title>Añadir Juego - MachacasDB</title>
 </head>
 
 <body>
-    <h1>Añadir juego</h1>
-    <p>Rellena el siguiente formulario para añadir un nuevo juego:</p>
+    <header class="site-header">
+        <h1>🎮 Añadir nuevo juego</h1>
+        
+    </header>
+    <main class="container">
+        <p>Rellena el siguiente formulario para añadir un nuevo título a la base de datos:</p>
 
-    <form id="item_add_form" onsubmit="submitForm(this); return false;">
+        <form id="item_add_form" onsubmit="submitForm(this); return false;">
+            <label>Nombre:</label>
+            <input name="nombre" type="text" placeholder="Nombre del juego">
 
-    <label for="nombre">Nombre:</label><br>
-    <input name="nombre" type="text" placeholder="Nombre del juego"><br>
+            <label>Género:</label>
+            <input name="genero" type="text" placeholder="Ej: Sandbox, RPG...">
 
-    <label for="genero">Género:</label><br>
-    <input name="genero" type="text" placeholder="Sandbox"><br>
+            <label>Fecha de lanzamiento:</label>
+            <input name="fechaLanzamiento" type="text" placeholder="aaaa-mm-dd">
 
-    <label for="fechaLanzamiento">Fecha de Lanzamiento:</label><br>
-    <input name="fechaLanzamiento" type="text" placeholder="aaaa-mm-dd"><br>
+            <label>Precio de salida (€):</label>
+            <input name="precioSalida" type="text" placeholder="19.99">
 
-    <label for="precioSalida">Precio de Salida (€):</label><br>
-    <input name="precioSalida" type="text" placeholder="19.99"><br>
+            <label>Nota Metacritic:</label>
+            <input name="notaMetacritic" type="text" placeholder="Ej: 9 (Max 10; Min 0)">
 
-    <label for="notaMetacritic">Nota Metacritic:</label><br>
-    <input name="notaMetacritic" type="text" placeholder="Nota de los usuarios"><br><br>
+            <button id="addGame" type="submit">💾 Añadir juego</button>
+        </form>
+    </main>
 
-    <button id="item_add_submit" type="submit">Añadir juego</button>
-
-    </form>
-
+    <footer class="footer">Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres</footer>
 </body>
-
-<br><footer>Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres</footer>
 
 </html>

@@ -25,7 +25,7 @@ class VideogameController {
       die("Database connection failed: " . $conn->connect_error);
     }
 
-    $sql = "SELECT V.id, V.nombre FROM videojuegos AS V";
+    $sql = "SELECT * FROM videojuegos AS V";
     $resultado = $conn->query($sql);
     if (!$resultado) {
       echo "Error en la consulta SQL: " . $conn->error;
@@ -91,7 +91,7 @@ class VideogameController {
   }
 
   /*------------------------SHOW GAME DETAIL ---------------------*/
-  public static function mostrarDetalle($id = null) // Nuevo método para mostrar detalles de un juego
+  public static function mostrarDetalle($id) // Nuevo método para mostrar detalles de un juego
     {
         //$id = $_GET['id'] ?? null; // Obtener el ID del juego desde la URL
         if (!$id) {

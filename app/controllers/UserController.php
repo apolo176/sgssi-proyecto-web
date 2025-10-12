@@ -1,7 +1,8 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-function dd(...$vars) {
+function dd(...$vars)
+{
     foreach ($vars as $v) {
         echo "<pre>";
         var_dump($v);
@@ -112,23 +113,68 @@ class UserController
 
     private static function login($conn, $email, $password)
     {
-        $stmt = $conn->prepare("SELECT CONTRASENA FROM usuarios WHERE EMAIL = ?");
+        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE EMAIL = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
+
         if ($row = $result->fetch_assoc()) {
 
-            if (trim($password) === trim($row['CONTRASENA'])) {
-                echo "Login exitoso";
+            if (trim($password) === trim($row['contrasena'])) {
+                echo json_encode([
+                    'success' => true,
+                    'user' => [
+                        'id' => $row['id'],
+                        'nombre' => $row['nombre']
+                    ]
+                ]);
             } else {
-                echo "Hola";
+                echo json_encode(['success' => false]);
             }
         } else {
-            echo "Usuario no encontrado";
+            echo json_encode(['success' => false]);
         }
 
         $stmt->close();
     }
+    /*-------------------------------User Details--------------------------------- */
+    public static function showDetails()
+    {
+        include __DIR__ . '/../views/userDetails.html';
+    }
+    public function showUserData($user){
+        if (!$user) {
+            echo json_encode(null);
+            return;
+        }
+
+        $conn = new mysqli("db", "admin", "test", "database");
+        if ($conn->connect_error) die("Database connection failed: " . $conn->connect_error);
+
+        $user = intval($user); // seguridad
+        $sql = "SELECT * FROM usuarios WHERE id = $user";
+        $resultado = $conn->query($sql);
+
+        if ($resultado && $row = $resultado->fetch_assoc()) {
+            header('Content-Type: application/json');
+            echo json_encode($row);
+        } else {
+            echo json_encode(null);
+        }
+
+        $conn->close();
+    }
+        /*-------------------------------User Details--------------------------------- */
+    public function showModifyForm()
+    {
+        include __DIR__ . '/../views/register.html';
+    }
+    public function modifyUser()
+    {
+        //todo
+        echo "Hola";
+    }
+
 }
 
 ?>

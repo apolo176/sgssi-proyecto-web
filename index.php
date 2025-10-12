@@ -29,7 +29,26 @@ $router->addRoute('/dologin', function() {
     $controller = new UserController();
     $controller->processLoginForm();
 });
+/*---------USER ROUTES -----------*/
+$router->addRoute('/show_user', function() {
+    $controller = new UserController();
+    $user = $_GET['user'] ?? null;
 
+    $controller->showDetails();
+});
+$router->addRoute('/getUserData', function() {
+    $controller = new UserController();
+    $user = $_GET['user'] ?? null;
+    $controller->showUserData($user);
+});
+$router->addRoute('/modify_user', function() {
+    $controller = new UserController();
+    $controller->showModifyForm();
+});
+$router->addRoute('/modifyUser', function() {
+    $controller = new UserController();
+    $controller->modifyUser();
+});
 /*--------VIDEOGAMES ROUTES ----------*/
 $router->addRoute('/items', function() {
     $controller = new VideogameController();
@@ -50,6 +69,10 @@ $router->addRoute('/doAddItem', function() {
 });
 
 $router->addRoute('/show_item', function() {
+    $controller = new VideogameController();
+    $controller->showVideoGamesDetail();
+});
+$router->addRoute('/getItemData', function() {
     $controller = new VideogameController();
     $item = $_GET['item'] ?? null;
     $controller->mostrarDetalle($item);

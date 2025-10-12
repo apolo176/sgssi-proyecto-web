@@ -1,23 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Home Machacas</title>
-    <link rel="stylesheet" href="/app/styles.css"> <!-- enlazamos el CSS externo -->
+    <title>MachacasDB - Home</title>
+    <link rel="stylesheet" href="/app/styles.css">
+    <script src="/app/js/main.js" defer></script>
 </head>
+
 <body>
-    <header>
-        <h1>Bienvenido a la base de datos de videojuegos de los Machacas</h1>
-        <p>Aquí podrás encontrar toda la información acerca de tus juegos preferidos</p>
+    <header class="site-header">
+        <div class="header-left">
+            <h1>🎮 MachacasDB</h1>
+        </div>
+
+        <div class="header-right" id="userArea">
+            <!-- Aquí se insertará el círculo del usuario si está logueado -->
+        </div>
     </header>
-    <main>
-        <p>A continuación tienes las distintas funcionalidades que puedes utilizar:</p>
-        <ul>
-            <li><a href="/register">Registrarse</a></li>
-            <li><a href="/login">Iniciar sesión</a></li>
-            <li><a href="/items">Ver todos los videojuegos</a></li>
-            <li><a href="/add_item">Añadir un nuevo videojuego</a></li>
-        </ul>
+
+    <main class="main-container">
+        <section class="intro">
+            <h2>Bienvenido a la base de datos de los Machacas</h2>
+            <p>Consulta, añade y gestiona toda la información sobre tus juegos preferidos.</p>
+        </section>
+
+        <nav class="menu">
+            <ul id="menu">
+                <li><a href="/register">📝 Registrarse</a></li>
+                <li><a href="/login">🔑 Iniciar sesión</a></li>
+                <li><a href="/items">🎮 Ver todos los videojuegos</a></li>
+                <li><a href="/add_item">➕ Añadir un nuevo videojuego</a></li>
+            </ul>
+        </nav>
     </main>
+
+    <footer class="footer">
+        <p>© 2025 MachacasDB. Todos los derechos reservados.</p>
+    </footer>
 </body>
+
 </html>

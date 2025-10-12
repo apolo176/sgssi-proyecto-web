@@ -1,53 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Listado de Juegos</title>
-    <link rel="stylesheet" href="/app/styles.css"> <!-- enlazamos el CSS externo -->
+    <title>Listado de Juegos - MachacasDB</title>
+    <link rel="stylesheet" href="/app/styles.css">
+    <script src="/app/js/utils.js"></script>
     <script src="/app/js/listaVideojuegos.js" defer></script>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-        th, td {
-            border: 1px solid #aaa;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #ddd;
-        }
-    </style>
 </head>
+
 <body>
-    <h1 style="text-align:center;">Listado de videojuegos</h1>
-    <table id="tabla-juegos">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-            </tr>
+    <header class="site-header">
+        <h1>🕹️ Listado de videojuegos</h1>
+        <div class="header-right" id="userArea">
+            <!-- Aquí se insertará el círculo del usuario si está logueado -->
+        </div>
+    </header>
+    <main class="container">
 
-        </thead>
-        <tbody>
-            <!-- Aquí se insertarán las filas -->
-        </tbody>
-    </table>
+        <table id="tabla-juegos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Fecha de Lanzamiento</th>
+                    <th>Precio Salida</th>
+                    <th>Puntuacion en Metacritic</th>
+                    <th>Acciones</th>
 
-    <div style="width:80%;margin:20px auto;text-align:center;">
-    <button 
-        id="anadirjuego" 
-        type="button" 
-        style="padding:10px 30px;font-size:1.1em;"
-        onclick="window.location.href='/add_item'">
-        Añadir juego
-    </button>
-</div>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
 
+        <button id="addGame" type="button" onclick="window.location.href='/add_item'">
+            ➕ Añadir juego
+        </button>
+    </main>
+
+    <footer class="footer">Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres
+    </footer>
 </body>
-
-<footer>Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres</footer>
 
 </html>

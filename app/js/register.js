@@ -1,20 +1,73 @@
+const editUser = JSON.parse(localStorage.getItem('editUser'));
+const keyMap = {
+    nombreapellido: 'nombre',
+    DNI: 'dni',
+    password: 'contrasena',
+    fechanac: 'fechaNacimiento',
+    email: 'EMAIL',
+    telefono: 'TELEFONO'
+};
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('register_form');
+
+    // Ver si hay un usuario a editar
+
+    if (editUser) {
+        document.getElementById("title").innerText = "✏️ Modificar Datos del Usuario"
+        form.nombreapellido.value = editUser.nombre;
+        form.DNI.value = editUser.dni;
+        //form.password.value = editUser.password; // opcional, o dejar vacío
+        form.telefono.value = editUser.telefono;
+        form.fechanac.value = editUser.fechaNacimiento;
+        form.email.value = editUser.email;
+
+        // Cambiamos el texto del botón
+        const submitBtn = form.querySelector('#register_submit');
+        submitBtn.textContent = 'Actualizar datos';
+        const alreadyHasAccount = document.getElementById("alreadyHasAccount")
+        alreadyHasAccount.style="display:none"
+    }
+
+});
 
 function submitForm(formulario) {
     const datos = new FormData(formulario)
 
-    if (!validateNameAndSurname(datos) || ! validateDNI(datos) || !validatePassword(datos) || !validatePhone(datos) || !validateBirthDate(datos) || !validateEmail(datos)) 
+    if (!validateNameAndSurname(datos) || !validateDNI(datos) || !validatePassword(datos) || !validatePhone(datos) || !validateBirthDate(datos) || !validateEmail(datos))
         return false; //Si la validación falla, no envía el formulario
-    
 
-    fetch('/doregister', {
-        method: 'POST',
-        body: datos
-    })
-    .then(response => response.text())
-    .then(data => {
-        window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
-    })
-    .catch(error => console.error('Error:', error));
+    if (editUser) {
+        const cambios = {};
+        datos.forEach((value, key) => {
+            const dbKey = keyMap[key]; // Traducimos la key del form a la key de la BD
+            if (!dbKey) return; // Si no está en el map, ignorar
+
+            // Solo añadimos si cambia
+            if (value && editUser[key] !== value) {
+                cambios[dbKey] = value;
+            }
+        });
+        fetch('/modifyUser', {
+            method: 'PATCH',
+            body: JSON.stringify(cambios)
+        })
+            .then(response => response.text())
+            .then(data => {
+                window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
+            })
+            .catch(error => console.error('Error:', error));
+    } else {
+
+        fetch('/doregister', {
+            method: 'POST',
+            body: datos
+        })
+            .then(response => response.text())
+            .then(data => {
+                window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
+            })
+            .catch(error => console.error('Error:', error));
+    }
 }
 
 function validateNameAndSurname(datos) {
@@ -24,8 +77,8 @@ function validateNameAndSurname(datos) {
     if (!expresionRegular.test(nombreYapellido)) { //Si el el string que almacena el nombre y apellido no cumple la expresión regular
         window.alert('El nombre y apellido no es válido. Debe contener solo letras y espacios, y tener entre minimo 2 caracteres.');
         return false;
-    } 
-    
+    }
+
     return true;
 }
 
@@ -43,7 +96,7 @@ function validateDNI(datos) {
     const letraDNI = dni.charAt(8); //Obtiene la letra del DNI //.charAt(8) en vez de 9 porque se hace trim
     const letraCorrecta = letrasDNI.charAt(numeroDNI % 23); //Obtiene la letra correcta del DNI a partir del número
 
-    if (letraDNI !== letraCorrecta) { 
+    if (letraDNI !== letraCorrecta) {
         window.alert('El DNI no es válido. Por favor, introduce un DNI correcto.');
         return false;
     }
@@ -78,13 +131,13 @@ function validatePhone(datos) {
         window.alert('El número de teléfono no puede estar vacío.');
         return false;
     }
-    
+
     if (!expresionRegular.test(telefono)) {
         window.alert('El número de teléfono no es válido. Debe contener exactamente 9 dígitos numéricos.');
         return false;
-    } 
-    
-    return true;   
+    }
+
+    return true;
 }
 
 function validateBirthDate(datos) {
@@ -116,10 +169,10 @@ function validateEmail(datos) {
         return false;
     }
 
-    if (!expresionRegular.test(email)) { 
+    if (!expresionRegular.test(email)) {
         window.alert('El email no es válido.');
         return false;
-    } 
-    
+    }
+
     return true;
 }

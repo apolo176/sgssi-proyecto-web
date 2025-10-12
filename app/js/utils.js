@@ -1,31 +1,21 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const menu = document.getElementById('menu');
+window.createProfileCircle = function(){
     const usuario = JSON.parse(localStorage.getItem('usuario'));
 
 
     if (usuario) {
-        // Mostrar opciones de usuario en el menú
-        menu.innerHTML = `
-            <li><a href="/items">🎮 Ver todos los videojuegos</a></li>
-            <li><a href="/add_item">➕ Añadir un nuevo videojuego</a></li>
-            <li><a href="/show_user?user=${usuario.id}">⚙️ Modificar mis datos</a></li>
-            <li><a href="#" class="logout" id="logoutMain">🚪 Cerrar sesión</a></li>
-
-        `;
-
         // Crear el círculo de usuario
         const inicial = usuario.nombre?.charAt(0).toUpperCase() || 'U';
         userArea.innerHTML = `
             <div class="user-circle" id="userCircle">${inicial}</div>
             <div class="user-menu" id="userMenu">
                 <a href="/show_user?user=${usuario.id}">👤 ${usuario.nombre}</a>
-                <a href="#" class="logout" id="logout">🚪 Cerrar sesión</a>
+                <a href="#" id="logout">🚪 Cerrar sesión</a>
             </div>
         `;
 
         const userCircle = document.getElementById('userCircle');
         const userMenu = document.getElementById('userMenu');
-        const logoutLinks = document.querySelectorAll('.logout');
+        const logoutLink = document.getElementById('logout');
 
         // Toggle del menú al hacer clic en el círculo
         userCircle.addEventListener('click', () => {
@@ -33,13 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Cerrar sesión
-        logoutLinks.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('usuario');
-                window.location.reload();
-            });
-        })
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('usuario');
+            window.location.reload();
+        });
 
         // Cerrar el menú si se hace clic fuera
         document.addEventListener('click', (e) => {
@@ -48,4 +36,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+}
