@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('/app/controllers/VideogameController.php')
+    fetch('/showItems')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al obtener datos del servidor');
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fila.innerHTML = `
                     <td>${juego.id}</td>
                     <td>
-                        <a href="detalleJuego.html?id=${juego.id}">${juego.nombre}</a>
+                        <a href="/show_item?id=${juego.id}">${juego.nombre}</a>
                     </td>
                 `;
                 tbody.appendChild(fila);

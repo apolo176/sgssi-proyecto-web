@@ -5,7 +5,7 @@ function submitForm(formulario) {
     if (!validateEmail(datos) || ! validatePassword(datos)) 
         return false; 
     
-    fetch('/login', {
+    fetch('/dologin', {
         method: 'POST',
         body: datos
     })

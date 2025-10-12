@@ -6,7 +6,7 @@ function submitForm(formulario) {
         return false; //Si la validación falla, no envía el formulario
     
 
-    fetch('/app/controllers/RegisterController.php', {
+    fetch('/doregister', {
         method: 'POST',
         body: datos
     })
@@ -31,7 +31,7 @@ function validateNameAndSurname(datos) {
 
 function validateDNI(datos) {
     const dni = datos.get('DNI').trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
-    const expresionRegular = /^\d{8}-[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
+    const expresionRegular = /^\d{8}[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
     const letrasDNI = 'TRWAGMYFPDXBNJZSQVHLCKE'; //String que contiene las letras del DNI en el orden correcto
 
     if (!expresionRegular.test(dni)) { //Si el el string que almacena el DNI no cumple la expresión regular
