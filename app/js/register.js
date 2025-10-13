@@ -20,8 +20,14 @@ function submitForm(formulario) {
             body: datos
         })
             .then(response => response.text())
-            .then(data => {
-                window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
+            .then(data =>  {
+                data = JSON.parse(data)
+                window.alert(data.message); 
+                if(data.success){
+                localStorage.setItem('usuario', JSON.stringify(data.user));
+                window.location.href = '/';
+                }
+
             })
             .catch(error => console.error('Error:', error));
     

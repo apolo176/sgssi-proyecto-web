@@ -51,7 +51,10 @@ class UserController
         }
 
         if ($resultado->num_rows > 0) {
-            echo "El DNI ya está registrado";
+            echo json_encode([
+                'success' => false,
+                'message' => 'El DNI ya está registrado'
+            ]);
             return;
         }
 
@@ -63,16 +66,46 @@ class UserController
         }
 
         if ($resultado2->num_rows > 0) {
-            echo "El correo ya está registrado";
+            echo json_encode([
+                'success' => false,
+                'message' => 'El correo ya está registrado'
+            ]);
+            ;
             return;
         }
 
-        $sql = "INSERT INTO usuarios (nombre, dni, telefono, fechaNacimiento, email, contrasena)
-            VALUES ('$nombreapellido', '$dni', '$telefono', '$fecha', '$email', '$password')";
-        if ($conn->query($sql)) {
-            echo "Registro hecho correctamente";
+        $stmt = $conn->prepare("
+        INSERT INTO usuarios (nombre, dni, telefono, fechaNacimiento, email, contrasena)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+        $stmt->bind_param("ssssss", $nombreapellido, $dni, $telefono, $fecha, $email, $password);
+
+        if ($stmt->execute()) {
+            $newUserId = $conn->insert_id;
+
+            $stmt = $conn->prepare("SELECT id, nombre, email, dni, telefono, fechaNacimiento FROM usuarios WHERE id = ?");
+            $stmt->bind_param("i", $newUserId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($user = $result->fetch_assoc()) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Registro hecho correctamente',
+                    'user' => $user
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Registro hecho correctamente, pero no se pudo recuperar el usuario'
+                ]);
+            }
+
         } else {
-            echo "Error al registrar usuario: " . $conn->error;
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al registrar usuario: ' . $conn->error
+            ]);
         }
     }
 
