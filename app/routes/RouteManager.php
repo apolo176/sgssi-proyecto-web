@@ -1,12 +1,15 @@
 <?php
-class RouteManager {
+class RouteManager
+{
     private $routes = [];
 
-    public function addRoute(string $uri, callable $callback) {
+    public function addRoute(string $uri, callable $callback)
+    {
         $this->routes[$uri] = $callback;
     }
 
-    public function dispatch(string $request_uri) {
+    public function dispatch(string $request_uri)
+    {
         // Elimina cualquier parámetro de consulta y la ruta raíz si está presente
         $request_uri = strtok($request_uri, '?');
         $request_uri = rtrim($request_uri, '/');
@@ -20,4 +23,3 @@ class RouteManager {
         }
     }
 }
-?>

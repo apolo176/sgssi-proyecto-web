@@ -69,8 +69,7 @@ class UserController
             echo json_encode([
                 'success' => false,
                 'message' => 'El correo ya está registrado'
-            ]);
-            ;
+            ]);;
             return;
         }
 
@@ -100,7 +99,6 @@ class UserController
                     'message' => 'Registro hecho correctamente, pero no se pudo recuperar el usuario'
                 ]);
             }
-
         } else {
             echo json_encode([
                 'success' => false,
@@ -256,7 +254,4 @@ class UserController
         $stmt->close();
         $conn->close();
     }
-
 }
-
-?>

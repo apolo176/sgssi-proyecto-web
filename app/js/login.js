@@ -1,53 +1,49 @@
-
 function submitForm(formulario) {
-    const datos = new FormData(formulario)
+  const datos = new FormData(formulario);
 
-    if (!validateEmail(datos) || !validatePassword(datos))
-        return false;
+  if (!validateEmail(datos) || !validatePassword(datos)) return false;
 
-    fetch('/dologin', {
-        method: 'POST',
-        body: datos
+  fetch("/dologin", {
+    method: "POST",
+    body: datos,
+  })
+    .then((response) => response.text())
+    .then((rawData) => {
+      data = JSON.parse(rawData);
+      if (data.success) {
+        // Guardar al usuario en localStorage
+        localStorage.setItem("usuario", JSON.stringify(data.user));
+        window.alert(`Bienvenido, ${data.user.nombre}`);
+
+        // Redirigir a la home
+        window.location.href = "/";
+      } else {
+        window.alert("Email o contraseña incorrectos");
+      }
     })
-        .then(response => response.text())
-        .then(rawData => {
-            data = JSON.parse(rawData)
-            if (data.success) {
-                // Guardar al usuario en localStorage
-                localStorage.setItem('usuario', JSON.stringify(data.user));
-                window.alert(`Bienvenido, ${data.user.nombre}`);
-
-                // Redirigir a la home
-                window.location.href = '/';
-            } else {
-                window.alert('Email o contraseña incorrectos');
-            }
-
-        })
-        .catch(error => console.error('Error:', error));
+    .catch((error) => console.error("Error:", error));
 }
 
 function validateEmail(datos) {
-    const email = (datos.get('email') || '').trim();
+  const email = (datos.get("email") || "").trim();
 
-    const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; //Expresion regular que nos permite buscar un email válido
+  const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; //Expresion regular que nos permite buscar un email válido
 
-    if (!expresionRegular.test(email)) {
-        window.alert('El email no es válido.');
-        return false;
-    }
+  if (!expresionRegular.test(email)) {
+    window.alert("El email no es válido.");
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 function validatePassword(datos) {
-    const password = (datos.get('password') || '').trim();
+  const password = (datos.get("password") || "").trim();
 
-    if (password === "") {
-        window.alert('La contraseña no puede estar vacía.');
-        return false;
-    }
+  if (password === "") {
+    window.alert("La contraseña no puede estar vacía.");
+    return false;
+  }
 
-    return true;
+  return true;
 }
-

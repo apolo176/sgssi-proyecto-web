@@ -1,166 +1,180 @@
-const editUser = JSON.parse(localStorage.getItem('editUser'));
+const editUser = JSON.parse(localStorage.getItem("editUser"));
 const keyMap = {
-    nombreapellido: 'nombre',
-    DNI: 'dni',
-    password: 'contrasena',
-    fechanac: 'fechaNacimiento',
-    email: 'EMAIL',
-    telefono: 'TELEFONO'
+  nombreapellido: "nombre",
+  DNI: "dni",
+  password: "contrasena",
+  fechanac: "fechaNacimiento",
+  email: "EMAIL",
+  telefono: "TELEFONO",
 };
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('user_modify_form');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("user_modify_form");
 
-        document.getElementById("title").innerText = "✏️ Modificar Datos del Usuario"
-        form.nombre.value = editUser.nombre;
-        form.dni.value = editUser.dni;
-        //form.password.value = editUser.password; // opcional, o dejar vacío
-        form.telefono.value = editUser.telefono;
-        form.fechaNacimiento.value = editUser.fechaNacimiento;
-        form.email.value = editUser.email;
+  document.getElementById("title").innerText = "✏️ Modificar Datos del Usuario";
+  form.nombre.value = editUser.nombre;
+  form.dni.value = editUser.dni;
+  //form.password.value = editUser.password; // opcional, o dejar vacío
+  form.telefono.value = editUser.telefono;
+  form.fechaNacimiento.value = editUser.fechaNacimiento;
+  form.email.value = editUser.email;
 
-        // Cambiamos el texto del botón
-        const submitBtn = form.querySelector('#user_modify_submit');
-        submitBtn.textContent = 'Actualizar datos';
-        const alreadyHasAccount = document.getElementById("alreadyHasAccount")
-        alreadyHasAccount.style="display:none"
-    
-
+  // Cambiamos el texto del botón
+  const submitBtn = form.querySelector("#user_modify_submit");
+  submitBtn.textContent = "Actualizar datos";
+  const alreadyHasAccount = document.getElementById("alreadyHasAccount");
+  alreadyHasAccount.style = "display:none";
 });
 
 function submitForm(formulario) {
-    const datos = new FormData(formulario)
+  const datos = new FormData(formulario);
 
-    if (!validateNameAndSurname(datos) || !validateDNI(datos) || !validatePassword(datos) || !validatePhone(datos) || !validateBirthDate(datos) || !validateEmail(datos))
-        return false; //Si la validación falla, no envía el formulario
-        const cambios = {};
-        datos.forEach((value, key) => {
-
-            // Solo añadimos si cambia
-            if (value && editUser[key] !== value) {
-                cambios[key] = value;
-            }
-        });
-        cambios.id = editUser.id
-        if (Object.keys(cambios).length < 2){
-            window.alert('Haz algun cambio')
-            return false
-        }
-        fetch(`/modifyUser`, {
-            method: 'PATCH',
-            body: JSON.stringify(cambios)
-        })
-            .then(response => response.text())
-            .then(data => {
-                window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
-                window.location.href = '/'
-            })
-            .catch(error => console.error('Error:', error));
-    
+  if (
+    !validateNameAndSurname(datos) ||
+    !validateDNI(datos) ||
+    !validatePassword(datos) ||
+    !validatePhone(datos) ||
+    !validateBirthDate(datos) ||
+    !validateEmail(datos)
+  )
+    return false; //Si la validación falla, no envía el formulario
+  const cambios = {};
+  datos.forEach((value, key) => {
+    // Solo añadimos si cambia
+    if (value && editUser[key] !== value) {
+      cambios[key] = value;
+    }
+  });
+  cambios.id = editUser.id;
+  if (Object.keys(cambios).length < 2) {
+    window.alert("Haz algun cambio");
+    return false;
+  }
+  fetch(`/modifyUser`, {
+    method: "PATCH",
+    body: JSON.stringify(cambios),
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
+      window.location.href = "/";
+    })
+    .catch((error) => console.error("Error:", error));
 }
 
 function validateNameAndSurname(datos) {
-    const nombreYapellido = (datos.get('nombre') || '').trim(); //Trim nos permite eliminar los espacios en blanco al inicio y al final del string
-    const expresionRegular = /^[a-zA-ZÀ-ÿ]+(\s+[a-zA-ZÀ-ÿ]+)+$/; //Expresion regular que nos permite buscar letras (mayusculas y minusculas) y mínimo 2 caracteres
+  const nombreYapellido = (datos.get("nombre") || "").trim(); //Trim nos permite eliminar los espacios en blanco al inicio y al final del string
+  const expresionRegular = /^[a-zA-ZÀ-ÿ]+(\s+[a-zA-ZÀ-ÿ]+)+$/; //Expresion regular que nos permite buscar letras (mayusculas y minusculas) y mínimo 2 caracteres
 
-    if (!expresionRegular.test(nombreYapellido)) { //Si el el string que almacena el nombre y apellido no cumple la expresión regular
-        window.alert('El nombre y apellido no es válido. Debe contener solo letras y espacios, y tener entre minimo 2 caracteres.');
-        return false;
-    }
+  if (!expresionRegular.test(nombreYapellido)) {
+    //Si el el string que almacena el nombre y apellido no cumple la expresión regular
+    window.alert(
+      "El nombre y apellido no es válido. Debe contener solo letras y espacios, y tener entre minimo 2 caracteres."
+    );
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 function validateDNI(datos) {
-    const dni = datos.get('dni').trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
-    const expresionRegular = /^\d{8}-[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
-    const letrasDNI = 'TRWAGMYFPDXBNJZSQVHLCKE'; //String que contiene las letras del DNI en el orden correcto
+  const dni = datos.get("dni").trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
+  const expresionRegular = /^\d{8}-[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
+  const letrasDNI = "TRWAGMYFPDXBNJZSQVHLCKE"; //String que contiene las letras del DNI en el orden correcto
 
-    if (!expresionRegular.test(dni)) { //Si el el string que almacena el DNI no cumple la expresión regular
-        window.alert('El DNI no es válido. Debe tener 8 números seguidos de un guion y una letra mayúscula (por ejemplo, 12345678-A).');
-        return false;
-    }
+  if (!expresionRegular.test(dni)) {
+    //Si el el string que almacena el DNI no cumple la expresión regular
+    window.alert(
+      "El DNI no es válido. Debe tener 8 números seguidos de un guion y una letra mayúscula (por ejemplo, 12345678-A)."
+    );
+    return false;
+  }
 
-    const numeroDNI = parseInt(dni.substring(0, 8)); //Obtiene los 8 primeros caracteres del DNI y los convierte en un número entero
-    const letraDNI = dni.charAt(9); //Obtiene la letra del DNI //.charAt(8) en vez de 9 porque se hace trim
-    const letraCorrecta = letrasDNI.charAt(numeroDNI % 23); //Obtiene la letra correcta del DNI a partir del número
+  const numeroDNI = parseInt(dni.substring(0, 8)); //Obtiene los 8 primeros caracteres del DNI y los convierte en un número entero
+  const letraDNI = dni.charAt(9); //Obtiene la letra del DNI //.charAt(8) en vez de 9 porque se hace trim
+  const letraCorrecta = letrasDNI.charAt(numeroDNI % 23); //Obtiene la letra correcta del DNI a partir del número
 
-    if (letraDNI !== letraCorrecta) {
-        window.alert('El DNI no es válido. Por favor, introduce un DNI correcto.');
-        return false;
-    }
+  if (letraDNI !== letraCorrecta) {
+    window.alert("El DNI no es válido. Por favor, introduce un DNI correcto.");
+    return false;
+  }
 
-    return true;
+  return true;
 }
-
 
 function validatePassword(datos) {
-    const password = (datos.get('contrasena') || '').trim();
+  const password = (datos.get("contrasena") || "").trim();
 
-    if (!password) {
-        window.alert('La contraseña no puede estar vacía.');
-        return false;
-    }
+  if (!password) {
+    window.alert("La contraseña no puede estar vacía.");
+    return false;
+  }
 
-    if (password.length < 6) {
-        window.alert('La contraseña debe tener al menos 6 caracteres.');
-        return false;
-    }
+  if (password.length < 6) {
+    window.alert("La contraseña debe tener al menos 6 caracteres.");
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
-
-
 function validatePhone(datos) {
-    const telefono = (datos.get('telefono') || '').trim();
-    const expresionRegular = /^\d{9}$/; //Expresion regular que nos permite buscar 9 números
+  const telefono = (datos.get("telefono") || "").trim();
+  const expresionRegular = /^\d{9}$/; //Expresion regular que nos permite buscar 9 números
 
-    if (!telefono) {
-        window.alert('El número de teléfono no puede estar vacío.');
-        return false;
-    }
+  if (!telefono) {
+    window.alert("El número de teléfono no puede estar vacío.");
+    return false;
+  }
 
-    if (!expresionRegular.test(telefono)) {
-        window.alert('El número de teléfono no es válido. Debe contener exactamente 9 dígitos numéricos.');
-        return false;
-    }
+  if (!expresionRegular.test(telefono)) {
+    window.alert(
+      "El número de teléfono no es válido. Debe contener exactamente 9 dígitos numéricos."
+    );
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 function validateBirthDate(datos) {
-    const fechaNacimiento = (datos.get('fechaNacimiento') || '').trim();
-    const expresionRegular = /^\d{4}-\d{2}-\d{2}$/; //Expresion regular que nos permite buscar fechas en formato aaaa-mm-dd
+  const fechaNacimiento = (datos.get("fechaNacimiento") || "").trim();
+  const expresionRegular = /^\d{4}-\d{2}-\d{2}$/; //Expresion regular que nos permite buscar fechas en formato aaaa-mm-dd
 
-    if (!expresionRegular.test(fechaNacimiento)) {
-        window.alert('La fecha de nacimiento no es válida. Debe tener el formato aaaa-mm-dd.');
-        return false;
-    }
+  if (!expresionRegular.test(fechaNacimiento)) {
+    window.alert(
+      "La fecha de nacimiento no es válida. Debe tener el formato aaaa-mm-dd."
+    );
+    return false;
+  }
 
-    const [anio, mes, dia] = fechaNacimiento.split('-').map(Number);
-    const fecha = new Date(anio, mes - 1, dia);
+  const [anio, mes, dia] = fechaNacimiento.split("-").map(Number);
+  const fecha = new Date(anio, mes - 1, dia);
 
-    // Comprobamos que la fecha exista realmente
-    if (fecha.getFullYear() !== anio || fecha.getMonth() + 1 !== mes || fecha.getDate() !== dia) {
-        alert('La fecha de nacimiento no existe.');
-        return false;
-    }
-    return true;
+  // Comprobamos que la fecha exista realmente
+  if (
+    fecha.getFullYear() !== anio ||
+    fecha.getMonth() + 1 !== mes ||
+    fecha.getDate() !== dia
+  ) {
+    alert("La fecha de nacimiento no existe.");
+    return false;
+  }
+  return true;
 }
 
 function validateEmail(datos) {
-    const email = datos.get('email').trim();
-    const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; //Expresion regular que nos permite buscar un email válido (minimo 5 caracteres e@e.c)
+  const email = datos.get("email").trim();
+  const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; //Expresion regular que nos permite buscar un email válido (minimo 5 caracteres e@e.c)
 
-    if (!email) {
-        window.alert('El email no puede estar vacío.');
-        return false;
-    }
+  if (!email) {
+    window.alert("El email no puede estar vacío.");
+    return false;
+  }
 
-    if (!expresionRegular.test(email)) {
-        window.alert('El email no es válido.');
-        return false;
-    }
+  if (!expresionRegular.test(email)) {
+    window.alert("El email no es válido.");
+    return false;
+  }
 
-    return true;
+  return true;
 }

@@ -6,80 +6,80 @@ require_once __DIR__ . '/app/controllers/UserController.php';
 require_once __DIR__ . '/app/controllers/VideogameController.php';
 $router = new RouteManager();
 
-$router->addRoute('', function() {
+$router->addRoute('', function () {
     $controller = new HomeController();
     $controller->index();
 });
 /*---------REGISTER ROUTES -----------*/
-$router->addRoute('/register', function() {
+$router->addRoute('/register', function () {
     $controller = new UserController();
     $controller->showRegister();
 });
-$router->addRoute('/doregister', function() {
+$router->addRoute('/doregister', function () {
     $controller = new UserController();
     $controller->processRegisterForm();
 });
 
 /*---------LOGIN ROUTES -----------*/
-$router->addRoute('/login', function() {
+$router->addRoute('/login', function () {
     $controller = new UserController();
     $controller->showLogin();
 });
-$router->addRoute('/dologin', function() {
+$router->addRoute('/dologin', function () {
     $controller = new UserController();
     $controller->processLoginForm();
 });
 /*---------USER ROUTES -----------*/
-$router->addRoute('/show_user', function() {
+$router->addRoute('/show_user', function () {
     $controller = new UserController();
     $user = $_GET['user'] ?? null;
 
     $controller->showDetails();
 });
-$router->addRoute('/getUserData', function() {
+$router->addRoute('/getUserData', function () {
     $controller = new UserController();
     $user = $_GET['user'] ?? null;
     $controller->showUserData($user);
 });
-$router->addRoute('/modify_user', function() {
+$router->addRoute('/modify_user', function () {
     $controller = new UserController();
     $controller->showModifyForm();
 });
-$router->addRoute('/modifyUser', function() {
+$router->addRoute('/modifyUser', function () {
     $controller = new UserController();
     $payload = json_decode(file_get_contents('php://input'), true);
 
     $controller->modifyUser($payload);
 });
 /*--------VIDEOGAMES ROUTES ----------*/
-$router->addRoute('/items', function() {
+$router->addRoute('/items', function () {
     $controller = new VideogameController();
     $controller->showVideoGames();
 });
-$router->addRoute('/showItems', function() {
+$router->addRoute('/showItems', function () {
     $controller = new VideogameController();
     $controller->listarVideojuegos();
 });
 
-$router->addRoute('/add_item', function() {
+$router->addRoute('/add_item', function () {
     $controller = new VideogameController();
     $controller->showNewVideoGame();
 });
-$router->addRoute('/doAddItem', function() {
+$router->addRoute('/doAddItem', function () {
     $controller = new VideogameController();
     $controller->processFormAdd();
 });
 
-$router->addRoute('/doDeleteItem', function() {
+$router->addRoute('/doDeleteItem', function () {
     $controller = new VideogameController();
     $controller->processFormDelete();
 });
 
-$router->addRoute('/show_item', function() {
+$router->addRoute('/show_item', function () {
     $controller = new VideogameController();
     $controller->showVideoGamesDetail();
 });
-$router->addRoute('/getItemData', function() {
+$router->addRoute('/getItemData', function () {
     $controller = new VideogameController();
     $item = $_GET['item'] ?? null;
     $controller->mostrarDetalle($item);
@@ -88,4 +88,3 @@ $router->addRoute('/getItemData', function() {
 // Manejar la ruta solicitada
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->dispatch($request_uri);
-?>
