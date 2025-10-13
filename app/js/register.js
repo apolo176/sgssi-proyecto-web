@@ -84,7 +84,7 @@ function validateNameAndSurname(datos) {
 
 function validateDNI(datos) {
     const dni = datos.get('DNI').trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
-    const expresionRegular = /^\d{8}[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
+    const expresionRegular = /^\d{8}-[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
     const letrasDNI = 'TRWAGMYFPDXBNJZSQVHLCKE'; //String que contiene las letras del DNI en el orden correcto
 
     if (!expresionRegular.test(dni)) { //Si el el string que almacena el DNI no cumple la expresión regular
@@ -93,7 +93,7 @@ function validateDNI(datos) {
     }
 
     const numeroDNI = parseInt(dni.substring(0, 8)); //Obtiene los 8 primeros caracteres del DNI y los convierte en un número entero
-    const letraDNI = dni.charAt(8); //Obtiene la letra del DNI //.charAt(8) en vez de 9 porque se hace trim
+    const letraDNI = dni.charAt(9); //Obtiene la letra del DNI
     const letraCorrecta = letrasDNI.charAt(numeroDNI % 23); //Obtiene la letra correcta del DNI a partir del número
 
     if (letraDNI !== letraCorrecta) {
