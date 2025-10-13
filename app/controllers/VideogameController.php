@@ -44,7 +44,7 @@ class VideogameController {
   }
 
   /*------------------------ADD NEW GAME --------------------------*/
-    public static function processForm()
+    public static function processFormAdd()
   {
     $hostname = "db";
     $username = "admin";
@@ -87,6 +87,47 @@ class VideogameController {
       echo "Registro hecho correctamente";
     } else {
       echo "Error al registrar videojuego: " . $conn->error;
+    }
+  }
+
+  /*------------------------DELETE GAME --------------------------*/
+
+  public static function processFormDelete()
+  {
+    $hostname = "db";
+    $username = "admin";
+    $password = "test";
+    $db = "database";
+
+    $conn = new mysqli($hostname, $username, $password, $db);
+    if ($conn->connect_error) {
+      die("Database connection failed: " . $conn->connect_error);
+    }
+
+    $id = $_GET['item'] ?? null;
+    if (!$id) {
+      echo "ID no proporcionado.";
+      return;
+    }
+
+    self::deleteGame($conn, $id);
+    $conn->close();
+  }
+
+  private static function deleteGame($conn, $id)
+  {
+    $sql = "DELETE FROM videojuegos WHERE id = '$id'";
+    $resultado = $conn->query($sql);
+
+    if (!$resultado) {
+      echo "Error en la consulta SQL: " . $conn->error;
+      return;
+    }
+
+    if ($conn->affected_rows > 0) {
+        echo "Videojuego eliminado correctamente.";
+    } else {
+        echo "No se encontró ningún videojuego con ese ID.";
     }
   }
 

@@ -65,7 +65,12 @@ $router->addRoute('/add_item', function() {
 });
 $router->addRoute('/doAddItem', function() {
     $controller = new VideogameController();
-    $controller->processForm();
+    $controller->processFormAdd();
+});
+
+$router->addRoute('/doDeleteItem', function() {
+    $controller = new VideogameController();
+    $controller->processFormDelete();
 });
 
 $router->addRoute('/show_item', function() {

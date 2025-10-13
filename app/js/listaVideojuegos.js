@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>
                         <a href="/show_item?item=${juego.id}" class="detalle-btn">👁️</a>
                         <a href="/modify_item?item=${data.id}" class="detalle-btn">✏️</a>
+                        <a href="/doDeleteItem?item=${juego.id}" class="detalle-btn" onclick="return confirm('¿Estás seguro de borrar este juego?')">❌</a>
 
                     </td>                `;
                 tbody.appendChild(fila);
