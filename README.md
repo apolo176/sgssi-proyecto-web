@@ -34,29 +34,25 @@ Here we will briefly explain how to launch this project on your local machine. W
 
 2. Execute the next command to download the project:
 
-
+```bash
 $ git clone https://github.com/apolo176/sgssi-proyecto-web.git
-
+```
 3. Enter the project directory:
-
-
+```bash
 $ cd sgssi-proyecto-web.git
-
+```
 4. Deploy the project using Docker Compose in detached mode (in background mode):
-
-
+```bash
 $ docker compose up -d
-
+```
 5. The project should have already been deployed successfully. If you want to stop it use the next command:
-
-
+```bash
 $ docker compose stop
-
+```
 6. If you want to stop and delete the containers use this instead:
-
-
+```bash
 $ docker compose down
-
+```
 7. To access the website and phpMyAdmin for database modifications access via the next URLs:
 
 - Web: http://localhost:81
