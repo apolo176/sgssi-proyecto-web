@@ -18,7 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         userArea.innerHTML = `
             <div class="user-circle" id="userCircle">${inicial}</div>
             <div class="user-menu" id="userMenu">
+                <a href="/" id="home">🏠 Home</a>
+
                 <a href="/show_user?user=${usuario.id}">👤 ${usuario.nombre}</a>
+
                 <a href="#" class="logout" id="logout">🚪 Cerrar sesión</a>
             </div>
         `;
@@ -37,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 localStorage.removeItem('usuario');
+                localStorage.removeItem('editUser');
                 window.location.reload();
             });
         })

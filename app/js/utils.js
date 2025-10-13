@@ -9,6 +9,8 @@ window.createProfileCircle = function(){
             <div class="user-circle" id="userCircle">${inicial}</div>
             <div class="user-menu" id="userMenu">
                 <a href="/show_user?user=${usuario.id}">👤 ${usuario.nombre}</a>
+                <a href="/" id="home">🏠 Home</a>
+
                 <a href="#" id="logout">🚪 Cerrar sesión</a>
             </div>
         `;
@@ -26,6 +28,7 @@ window.createProfileCircle = function(){
         logoutLink.addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('usuario');
+            localStorage.removeItem('editUser');
             window.location.reload();
         });
 

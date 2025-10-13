@@ -7,13 +7,14 @@ function submitForm(formulario) {
     if (!validateLaunchDate(datos) || !validatePrice(datos) || !validateMetacriticScore(datos)) 
         return false;
 
-    fetch('/app/controllers/AnadirJuegoController.php', {
+    fetch('/doAddItem', {
         method: 'POST',
         body: datos
     })
     .then(response => response.text())
     .then(data => {
         window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
+        window.location.href = '/items'
     })
     .catch(error => console.error('Error:', error));
 }
