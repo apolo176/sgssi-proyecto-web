@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.appendChild(fila);
       });
 
-      // ✅ Agregar los listeners una vez creadas las filas
       document.querySelectorAll(".borrar-btn").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
           try {
@@ -62,7 +61,4 @@ document.addEventListener("DOMContentLoaded", () => {
       const tbody = document.querySelector("#tabla-juegos tbody");
       tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${err.message}</td></tr>`;
     });
-
-  // Si existe tu función de perfil
-  window.createProfileCircle?.();
 });
