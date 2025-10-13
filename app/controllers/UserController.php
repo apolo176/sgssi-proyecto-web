@@ -142,14 +142,16 @@ class UserController
     {
         include __DIR__ . '/../views/userDetails.html';
     }
-    public function showUserData($user){
+    public function showUserData($user)
+    {
         if (!$user) {
             echo json_encode(null);
             return;
         }
 
         $conn = new mysqli("db", "admin", "test", "database");
-        if ($conn->connect_error) die("Database connection failed: " . $conn->connect_error);
+        if ($conn->connect_error)
+            die("Database connection failed: " . $conn->connect_error);
 
         $user = intval($user); // seguridad
         $sql = "SELECT * FROM usuarios WHERE id = $user";
@@ -164,15 +166,62 @@ class UserController
 
         $conn->close();
     }
-        /*-------------------------------User Details--------------------------------- */
+    /*-------------------------------User Details--------------------------------- */
     public function showModifyForm()
     {
-        include __DIR__ . '/../views/register.html';
+        include __DIR__ . '/../views/modifyUser.html';
     }
-    public function modifyUser()
+    public function modifyUser($payload)
     {
-        //todo
-        echo "Hola";
+
+        if (!$payload || !is_array($payload)) {
+            echo "Datos inválidos o incompletos";
+            return;
+        }
+
+        // Si no hay campos modificados, salimos
+        if (empty($payload)) {
+            echo "No hay campos para actualizar";
+            return;
+        }
+
+        $conn = new mysqli("db", "admin", "test", "database");
+        if ($conn->connect_error) {
+            echo "Error de conexión: " . $conn->connect_error;
+            return;
+        }
+
+        // Construcción dinámica del UPDATE
+        $updates = [];
+        $params = [];
+        $types = '';
+
+        foreach ($payload as $col => $val) {
+            $updates[] = "$col = ?";
+            $params[] = $val;
+            $types .= 's';
+        }
+
+        $sql = "UPDATE usuarios SET " . implode(", ", $updates) . " WHERE id = ?";
+        $params[] = $payload['id'];
+        $types .= 's';
+
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            echo "Error preparando la consulta: " . $conn->error;
+            return;
+        }
+
+        $stmt->bind_param($types, ...$params);
+
+        if ($stmt->execute()) {
+            echo "Datos actualizados correctamente";
+        } else {
+            echo "Error al actualizar los datos: " . $stmt->error;
+        }
+
+        $stmt->close();
+        $conn->close();
     }
 
 }

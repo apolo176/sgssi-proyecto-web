@@ -7,28 +7,59 @@ const keyMap = {
     email: 'EMAIL',
     telefono: 'TELEFONO'
 };
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('user_modify_form');
 
+        document.getElementById("title").innerText = "✏️ Modificar Datos del Usuario"
+        form.nombre.value = editUser.nombre;
+        form.dni.value = editUser.dni;
+        //form.password.value = editUser.password; // opcional, o dejar vacío
+        form.telefono.value = editUser.telefono;
+        form.fechaNacimiento.value = editUser.fechaNacimiento;
+        form.email.value = editUser.email;
+
+        // Cambiamos el texto del botón
+        const submitBtn = form.querySelector('#user_modify_submit');
+        submitBtn.textContent = 'Actualizar datos';
+        const alreadyHasAccount = document.getElementById("alreadyHasAccount")
+        alreadyHasAccount.style="display:none"
+    
+
+});
 
 function submitForm(formulario) {
     const datos = new FormData(formulario)
 
     if (!validateNameAndSurname(datos) || !validateDNI(datos) || !validatePassword(datos) || !validatePhone(datos) || !validateBirthDate(datos) || !validateEmail(datos))
         return false; //Si la validación falla, no envía el formulario
+        const cambios = {};
+        datos.forEach((value, key) => {
 
-        fetch('/doregister', {
-            method: 'POST',
-            body: datos
+            // Solo añadimos si cambia
+            if (value && editUser[key] !== value) {
+                cambios[key] = value;
+            }
+        });
+        cambios.id = editUser.id
+        if (Object.keys(cambios).length === 0){
+            window.alert('Haz algun cambio')
+            return false
+        }
+        fetch(`/modifyUser`, {
+            method: 'PATCH',
+            body: JSON.stringify(cambios)
         })
             .then(response => response.text())
             .then(data => {
                 window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
+                window.location.href = '/'
             })
             .catch(error => console.error('Error:', error));
     
 }
 
 function validateNameAndSurname(datos) {
-    const nombreYapellido = (datos.get('nombreapellido') || '').trim(); //Trim nos permite eliminar los espacios en blanco al inicio y al final del string
+    const nombreYapellido = (datos.get('nombre') || '').trim(); //Trim nos permite eliminar los espacios en blanco al inicio y al final del string
     const expresionRegular = /^[a-zA-ZÀ-ÿ]+(\s+[a-zA-ZÀ-ÿ]+)+$/; //Expresion regular que nos permite buscar letras (mayusculas y minusculas) y mínimo 2 caracteres
 
     if (!expresionRegular.test(nombreYapellido)) { //Si el el string que almacena el nombre y apellido no cumple la expresión regular
@@ -40,8 +71,8 @@ function validateNameAndSurname(datos) {
 }
 
 function validateDNI(datos) {
-    const dni = datos.get('DNI').trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
-    const expresionRegular = /^\d{8}-[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
+    const dni = datos.get('dni').trim().toUpperCase(); //el uppercase convierte las letras a mayusculas
+    const expresionRegular = /^\d{8}[A-Z]$/; //Expresion regular que nos permite buscar 8 números seguidos de una letra (mayuscula) con un guion
     const letrasDNI = 'TRWAGMYFPDXBNJZSQVHLCKE'; //String que contiene las letras del DNI en el orden correcto
 
     if (!expresionRegular.test(dni)) { //Si el el string que almacena el DNI no cumple la expresión regular
@@ -50,7 +81,7 @@ function validateDNI(datos) {
     }
 
     const numeroDNI = parseInt(dni.substring(0, 8)); //Obtiene los 8 primeros caracteres del DNI y los convierte en un número entero
-    const letraDNI = dni.charAt(9); //Obtiene la letra del DNI
+    const letraDNI = dni.charAt(8); //Obtiene la letra del DNI //.charAt(8) en vez de 9 porque se hace trim
     const letraCorrecta = letrasDNI.charAt(numeroDNI % 23); //Obtiene la letra correcta del DNI a partir del número
 
     if (letraDNI !== letraCorrecta) {
@@ -63,7 +94,7 @@ function validateDNI(datos) {
 
 
 function validatePassword(datos) {
-    const password = (datos.get('password') || '').trim();
+    const password = (datos.get('contrasena') || '').trim();
 
     if (!password) {
         window.alert('La contraseña no puede estar vacía.');
@@ -98,7 +129,7 @@ function validatePhone(datos) {
 }
 
 function validateBirthDate(datos) {
-    const fechaNacimiento = (datos.get('fechanac') || '').trim();
+    const fechaNacimiento = (datos.get('fechaNacimiento') || '').trim();
     const expresionRegular = /^\d{4}-\d{2}-\d{2}$/; //Expresion regular que nos permite buscar fechas en formato aaaa-mm-dd
 
     if (!expresionRegular.test(fechaNacimiento)) {

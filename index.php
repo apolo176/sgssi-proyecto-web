@@ -47,7 +47,9 @@ $router->addRoute('/modify_user', function() {
 });
 $router->addRoute('/modifyUser', function() {
     $controller = new UserController();
-    $controller->modifyUser();
+    $payload = json_decode(file_get_contents('php://input'), true);
+
+    $controller->modifyUser($payload);
 });
 /*--------VIDEOGAMES ROUTES ----------*/
 $router->addRoute('/items', function() {

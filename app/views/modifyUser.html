@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - MachacasDB</title>
+    <link rel="stylesheet" href="/app/styles.css">
+    <script src="/app/js/modifyUser.js" defer></script>
+</head>
+
+<body>
+    <header class="site-header">
+        <h1 id="title">🧾 Registro de usuario</h1>
+    </header>
+    <main class="container">
+        <form id="user_modify_form" onsubmit="submitForm(this); return false;">
+            <label>Nombre y apellidos:</label>
+            <input name="nombre" type="text" placeholder="Nombre y apellidos">
+
+            <label>DNI:</label>
+            <input name="dni" type="text" placeholder="12345678-X">
+
+            <label>Contraseña:</label>
+            <input name="contrasena" type="password" placeholder="Contraseña segura">
+
+            <label>Teléfono:</label>
+            <input name="telefono" type="text" placeholder="685123456">
+
+            <label>Fecha de Nacimiento:</label>
+            <input name="fechaNacimiento" type="text" placeholder="aaaa-mm-dd">
+
+            <label>Email:</label>
+            <input name="email" type="text" placeholder="tuemail@dominio.com">
+
+            <button id="user_modify_submit" type="submit">📝 Registrarse</button>
+        </form>
+        <p id="alreadyHasAccount">¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a></p>
+    </main>
+
+    <footer class="footer">Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y Eder Torres</footer>
+</body>
+
+</html>
