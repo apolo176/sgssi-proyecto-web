@@ -41,25 +41,31 @@ $ git clone https://github.com/apolo176/sgssi-proyecto-web.git
 ```bash
 $ cd sgssi-proyecto-web.git
 ```
-4. Deploy the project using Docker Compose in detached mode (in background mode):
+4. Locate in "entrega_1" branch:
+```bash
+$ git checkout entrega_1
+```
+5. Deploy the project using Docker Compose in detached mode (in background mode):
 ```bash
 $ docker compose up -d
 ```
-5. The project should have already been deployed successfully. If you want to stop it use the next command:
+6. The project should have already been deployed successfully. If you want to stop it use the next command:
 ```bash
 $ docker compose stop
 ```
-6. If you want to stop and delete the containers use this instead:
+7. If you want to stop and delete the containers use this instead:
 ```bash
 $ docker compose down
 ```
-7. To access the website and phpMyAdmin for database modifications access via the next URLs:
+8. To access the website and phpMyAdmin for database modifications access via the next URLs:
 
 - Web: http://localhost:81
 
 - phpMyAdmin: http://localhost:8890 (user: admin, password: test)
 
-*If you are looking for phpMyAdmin, take a look at [this](https://github.com/celsocelante/docker-lamp/issues/2).*
+9. Import the "database.sql" located inside the project directory into the database called "database" using phpMyAdmin*
+
+**If you are looking for a phpMyAdmin database import tutorial, take a look at [this](https://help.one.com/hc/en-us/articles/115005588189-How-do-I-import-a-database-to-phpMyAdmin).*
 
 
 # 4. Authors
