@@ -70,10 +70,6 @@ $router->addRoute('/doAddItem', function () {
     $controller->processFormAdd();
 });
 
-$router->addRoute('/doDeleteItem', function () {
-    $controller = new VideogameController();
-    $controller->processFormDelete();
-});
 
 $router->addRoute('/show_item', function () {
     $controller = new VideogameController();
@@ -82,19 +78,28 @@ $router->addRoute('/show_item', function () {
 $router->addRoute('/getItemData', function () {
     $controller = new VideogameController();
     $item = $_GET['item'] ?? null;
-    $controller->mostrarDetalle($item);
+    $controller->getItem($item);
 });
 
 $router->addRoute('/modify_item', function () {
     $controller = new VideogameController();
     $controller->showModifyForm();
 });
-$router->addRoute('/doModifyItem', function () {
+$router->addRoute('/modifyItem', function () {
     $controller = new VideogameController();
     $payload = json_decode(file_get_contents('php://input'), true);
 
     $controller->modifyItem($payload);
 });
+$router->addRoute('/delete_item', function () {
+    $controller = new VideogameController();
+    $controller->showDeleteForm();
+});
+$router->addRoute('/doDeleteItem', function () {
+    $controller = new VideogameController();
+    $controller->processFormDelete();
+});
+
 
 // Manejar la ruta solicitada
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);

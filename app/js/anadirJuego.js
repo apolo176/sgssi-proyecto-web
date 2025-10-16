@@ -1,3 +1,6 @@
+document.addEventListener("DOMContentLoaded", () => {
+  window.createProfileCircle()
+});
 function submitForm(formulario) {
   const datos = new FormData(formulario);
 

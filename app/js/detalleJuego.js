@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    window.createProfileCircle()
+
   // Obtener id del query string
   const params = new URLSearchParams(window.location.search);
   const id = params.get("item");

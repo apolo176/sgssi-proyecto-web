@@ -18,6 +18,10 @@ class VideogameController
   {
     include __DIR__ . '/../views/modifyGame.html';
   }
+  public static function showDeleteForm()
+  {
+    include __DIR__ . '/../views/deleteGame.html';
+  }
 
   /*--------------------SHOW VIDEO GAMES -------------------*/
 
@@ -140,7 +144,7 @@ class VideogameController
   }
 
   /*------------------------SHOW GAME DETAIL ---------------------*/
-  public static function mostrarDetalle($id) // Nuevo método para mostrar detalles de un juego
+  public static function getItem($id) // Nuevo método para mostrar detalles de un juego
   {
     //$id = $_GET['id'] ?? null; // Obtener el ID del juego desde la URL
     if (!$id) {

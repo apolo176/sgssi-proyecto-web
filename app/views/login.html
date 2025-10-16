@@ -5,12 +5,18 @@
     <meta charset="UTF-8">
     <title>Login - MachacasDB</title>
     <link rel="stylesheet" href="/app/styles.css">
+    <script src="/app/js/utils.js"></script>
+
     <script src="/app/js/login.js" defer></script>
 </head>
 
 <body>
     <header class="site-header">
         <h1>🔑 Iniciar sesión</h1>
+
+        <div class="header-right" id="userArea">
+            <!-- Aquí se insertará el círculo del usuario si está logueado -->
+        </div>
     </header>
     <main class="container">
         <form id="login_form" onsubmit="submitForm(this); return false;">

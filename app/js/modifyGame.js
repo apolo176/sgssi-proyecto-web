@@ -1,17 +1,21 @@
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("item");
+const params = new URLSearchParams(window.location.search);
+const id = params.get("item");
+let editGame;
 
-
-
-document.addEventListener("DOMContentLoaded", async () => {
-  const editGame = await fetch(`/getItemData?item=${id}`, {
+async function fetchGame() {
+  editGame = await fetch(`/getItemData?item=${id}`, {
     method: "GET",
   })
     .then((response) => response.text())
     .then((data) => {
       return JSON.parse(data)
     })
-    .catch((error) => console.error("Error:", error));;
+    .catch((error) => console.error("Error:", error));
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  window.createProfileCircle()
+  await fetchGame()
   const form = document.getElementById("item_modify_form");
   form.nombre.value = editGame.nombre;
   form.genero.value = editGame.genero;
@@ -19,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   form.precioSalida.value = editGame.precioSalida;
   form.fechaLanzamiento.value = editGame.fechaLanzamiento;
   form.notaMetacritic.value = editGame.notaMetacritic;
-  
+
 });
 function submitForm(formulario) {
   const datos = new FormData(formulario);
@@ -40,9 +44,13 @@ function submitForm(formulario) {
     }
   });
   cambios.id = editGame.id;
+  if (Object.keys(cambios).length < 2) {
+    window.alert("Haz algun cambio");
+    return false;
+  }
   fetch("/modifyItem", {
     method: "POST",
-    body: datos,
+    body: JSON.stringify(cambios),
   })
     .then((response) => response.text())
     .then((data) => {

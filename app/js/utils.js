@@ -7,9 +7,8 @@ window.createProfileCircle = function () {
     userArea.innerHTML = `
             <div class="user-circle" id="userCircle">${inicial}</div>
             <div class="user-menu" id="userMenu">
-                <a href="/show_user?user=${usuario.id}">👤 ${usuario.nombre}</a>
                 <a href="/" id="home">🏠 Home</a>
-
+                <a href="/show_user?user=${usuario.id}">👤 ${usuario.nombre}</a>
                 <a href="#" id="logout">🚪 Cerrar sesión</a>
             </div>
         `;
@@ -37,5 +36,8 @@ window.createProfileCircle = function () {
         userMenu.classList.remove("active");
       }
     });
+  }else{
+    userArea.innerHTML = `
+      <a href="/" id="home"><div class="user-circle" id="userCircle">🏠</div></a>`;
   }
 };

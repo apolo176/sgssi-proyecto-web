@@ -1,12 +1,7 @@
 const editUser = JSON.parse(localStorage.getItem("editUser"));
-const keyMap = {
-  nombreapellido: "nombre",
-  DNI: "dni",
-  password: "contrasena",
-  fechanac: "fechaNacimiento",
-  email: "EMAIL",
-  telefono: "TELEFONO",
-};
+document.addEventListener("DOMContentLoaded", () => {
+  window.createProfileCircle()
+})
 
 function submitForm(formulario) {
   const datos = new FormData(formulario);

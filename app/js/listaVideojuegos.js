@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  window.createProfileCircle()
+
   fetch("/showItems")
     .then((response) => {
       if (!response.ok) {
@@ -28,7 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <td>
             <a href="/show_item?item=${juego.id}" class="detalle-btn">👁️</a>
             <a href="/modify_item?item=${juego.id}" class="detalle-btn">✏️</a>
-            <button class="detalle-btn borrar-btn" data-id="${juego.id}">❌</button>
+            <a href="/delete_item?item=${juego.id}" class="detalle-btn">❌</a>
+
           </td>`;
         tbody.appendChild(fila);
       });

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/app/js/utils.js"></script>
+
+    <script src="/app/js/deleteGame.js" defer></script>
+    <link rel="stylesheet" href="/app/styles.css" />
+    <title>Añadir Juego - MachacasDB</title>
+  </head>
+
+
+   <body>
+    <header class="site-header">
+      <h1>🎮 MachacasDB - Eliminación de juego</h1>
+
+        <div class="header-right" id="userArea">
+            <!-- Aquí se insertará el círculo del usuario si está logueado -->
+        </div>
+    </header>
+
+    <main class="containerDelete">
+      <h2>Confirmar eliminación</h2>
+      <p>
+        ¿Está seguro de que desea borrar este videojuego del catálogo? Esta
+        acción no se puede deshacer. Si confirma, el registro se eliminará
+        permanentemente de la base de datos de MachacasDB.
+      </p>
+
+      <!-- Sección de botones -->
+      <div class="button-group">
+        <button id="item_delete_submit" onclick="deleteSubmit()">
+          Sí, quiero borrar
+        </button>
+        <button id="item_delete_cancel" onclick="deleteCancel()">
+          No, cancelar
+        </button>
+      </div>
+
+      <!-- Mensaje de advertencia adicional -->
+      <p style="margin-top: 2rem; font-size: 0.9rem; color: #e84118;">
+        Consejo: si no está completamente seguro, presione “Cancelar” para
+        regresar al listado de juegos.
+      </p>
+    </main>
+
+    <footer class="footer">
+      Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y
+      Eder Torres
+    </footer>
+  </body>
+</html>

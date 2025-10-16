@@ -1,13 +1,21 @@
-const editUser = JSON.parse(localStorage.getItem("editUser"));
-const keyMap = {
-  nombreapellido: "nombre",
-  DNI: "dni",
-  password: "contrasena",
-  fechanac: "fechaNacimiento",
-  email: "EMAIL",
-  telefono: "TELEFONO",
-};
-document.addEventListener("DOMContentLoaded", () => {
+let editUser;
+const params = new URLSearchParams(window.location.search);
+const id = params.get("user");
+async function fetchUser() {
+  editUser = await fetch(`/getUserData?user=${id}`, {
+    method: "GET",
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      return JSON.parse(data)
+    })
+    .catch((error) => console.error("Error:", error));
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  window.createProfileCircle()
+
+  await fetchUser()
   const form = document.getElementById("user_modify_form");
 
   document.getElementById("title").innerText = "✏️ Modificar Datos del Usuario";
