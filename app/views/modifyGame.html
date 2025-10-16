@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/app/js/utils.js"></script>
+
+    <script src="/app/js/modifyGame.js" defer></script>
+    <link rel="stylesheet" href="/app/styles.css" />
+    <title>Añadir Juego - MachacasDB</title>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <h1>🎮 Añadir nuevo juego</h1>
+    </header>
+    <main class="container">
+      <p>
+        Modifica los datos que necesites:
+      </p>
+
+      <form id="item_modify_form" onsubmit="submitForm(this); return false;">
+        <label>Nombre:</label>
+        <input name="nombre" type="text" placeholder="Nombre del juego" />
+
+        <label>Género:</label>
+        <input name="genero" type="text" placeholder="Ej: Sandbox, RPG..." />
+
+        <label>Fecha de lanzamiento:</label>
+        <input name="fechaLanzamiento" type="text" placeholder="aaaa-mm-dd" />
+
+        <label>Precio de salida (€):</label>
+        <input name="precioSalida" type="text" placeholder="19.99" />
+
+        <label>Nota Metacritic:</label>
+        <input
+          name="notaMetacritic"
+          type="text"
+          placeholder="Ej: 9 (Max 10; Min 0)"
+        />
+
+        <button id=item_modify_submit" type="submit">💾 Añadir juego</button>
+      </form>
+    </main>
+
+    <footer class="footer">
+      Desarrollado por: Alex Isasi, Iker Ciordia, Liviu Deleanu, Jon Requies y
+      Eder Torres
+    </footer>
+  </body>
+</html>
