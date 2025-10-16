@@ -7,17 +7,14 @@
 
     <script src="/app/js/modifyGame.js" defer></script>
     <link rel="stylesheet" href="/app/styles.css" />
-    <title>Añadir Juego - MachacasDB</title>
+    <title>Modificar Juego - MachacasDB</title>
   </head>
 
   <body>
     <header class="site-header">
-      <h1>🎮 Añadir nuevo juego</h1>
+      <h1>🎮 Modificar juego</h1>
     </header>
     <main class="container">
-      <p>
-        Modifica los datos que necesites:
-      </p>
 
       <form id="item_modify_form" onsubmit="submitForm(this); return false;">
         <label>Nombre:</label>
@@ -39,7 +36,7 @@
           placeholder="Ej: 9 (Max 10; Min 0)"
         />
 
-        <button id=item_modify_submit" type="submit">💾 Añadir juego</button>
+        <button id="item_modify_submit" type="submit">💾 Modificar juego</button>
       </form>
     </main>
 
