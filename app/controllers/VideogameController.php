@@ -14,6 +14,10 @@ class VideogameController
   {
     include __DIR__ . '/../views/addGame.html';
   }
+  public static function showModifyForm()
+  {
+    include __DIR__ . '/../views/modifyGame.html';
+  }
 
   /*--------------------SHOW VIDEO GAMES -------------------*/
 
@@ -143,7 +147,6 @@ class VideogameController
       echo json_encode(null);
       return;
     }
-
     $conn = new mysqli("db", "admin", "test", "database");
     if ($conn->connect_error) die("Database connection failed: " . $conn->connect_error);
 
@@ -160,4 +163,54 @@ class VideogameController
 
     $conn->close();
   }
+
+  /*------------------------MODIFY GAME ---------------------*/
+  public static function modifyItem($payload)
+  {
+    if (!$payload || !is_array($payload)) {
+      echo "Datos inválidos o incompletos";
+      return;
+    }
+
+    // Si no hay campos modificados, salimos
+    if (empty($payload) || !isset($payload['id'])) {
+      echo "No hay campos para actualizar o ID no proporcionado";
+      return;
+    }
+
+    $conn = new mysqli("db", "admin", "test", "database");
+    if ($conn->connect_error) {
+      echo "Error de conexión: " . $conn->connect_error;
+      return;
+    }
+
+    $id = intval($payload['id']); // seguridad
+    unset($payload['id']); // eliminamos el id del array para no incluirlo en la actualización
+
+    $fields = [];
+    foreach ($payload as $key => $value) {
+      $safe_value = $conn->real_escape_string($value);
+      $fields[] = "$key = '$safe_value'";
+    }
+
+    if (empty($fields)) {
+      echo "No hay campos para actualizar";
+      return;
+    }
+
+    $sql = "UPDATE videojuegos SET " . implode(", ", $fields) . " WHERE id = $id";
+
+    if ($conn->query($sql) === TRUE) {
+      if ($conn->affected_rows > 0) {
+        echo "Videojuego modificado correctamente.";
+      } else {
+        echo "No se realizaron cambios.";
+      }
+    } else {
+      echo "Error al modificar videojuego: " . $conn->error;
+    }
+
+    $conn->close();
+  }
+
 }

@@ -85,6 +85,17 @@ $router->addRoute('/getItemData', function () {
     $controller->mostrarDetalle($item);
 });
 
+$router->addRoute('/modify_item', function () {
+    $controller = new VideogameController();
+    $controller->showModifyForm();
+});
+$router->addRoute('/doModifyItem', function () {
+    $controller = new VideogameController();
+    $payload = json_decode(file_get_contents('php://input'), true);
+
+    $controller->modifyItem($payload);
+});
+
 // Manejar la ruta solicitada
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->dispatch($request_uri);

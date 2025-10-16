@@ -5,22 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="/app/js/utils.js"></script>
 
-    <script src="/app/js/anadirJuego.js" defer></script>
+    <script src="/app/js/modifyGame.js" defer></script>
     <link rel="stylesheet" href="/app/styles.css" />
-    <title>Añadir Juego - MachacasDB</title>
+    <title>Modificar Juego - MachacasDB</title>
   </head>
 
   <body>
     <header class="site-header">
-      <h1>🎮 Añadir nuevo juego</h1>
+      <h1>🎮 Modificar juego</h1>
     </header>
     <main class="container">
-      <p>
-        Rellena el siguiente formulario para añadir un nuevo título a la base de
-        datos:
-      </p>
 
-      <form id="item_add_form" onsubmit="submitForm(this); return false;">
+      <form id="item_modify_form" onsubmit="submitForm(this); return false;">
         <label>Nombre:</label>
         <input name="nombre" type="text" placeholder="Nombre del juego" />
 
@@ -40,7 +36,7 @@
           placeholder="Ej: 9 (Max 10; Min 0)"
         />
 
-        <button id="item_add_submit" type="submit">💾 Añadir juego</button>
+        <button id="item_modify_submit" type="submit">💾 Modificar juego</button>
       </form>
     </main>
 
