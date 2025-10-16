@@ -41,7 +41,7 @@ $ git clone https://github.com/apolo176/sgssi-proyecto-web.git
 ```bash
 $ cd sgssi-proyecto-web.git
 ```
-4. Locate you in "entrega_1" branch:
+4. Move to "entrega_1" branch:
 ```bash
 $ git checkout entrega_1
 ```
