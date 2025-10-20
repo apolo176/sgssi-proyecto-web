@@ -52,7 +52,7 @@ function validateLaunchDate(datos) {
   return true;
 }
 
-function validatePrice(datos) {
+function validatePrice(datos) { //Metodo para validar el precio de salida
   const precio = (datos.get("precioSalida") || "").trim();
 
   if (!precio) {
@@ -72,7 +72,7 @@ function validatePrice(datos) {
   return true;
 }
 
-function validateMetacriticScore(datos) {
+function validateMetacriticScore(datos) { //Metodo para validar la nota metacritic
   const notaMetacritic = (datos.get("notaMetacritic") || "").trim();
 
   if (!notaMetacritic) {

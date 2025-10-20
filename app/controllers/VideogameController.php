@@ -80,7 +80,9 @@ class VideogameController
   }
 
   private static function addgame($conn, $nombre, $genero, $fechaLanzamiento, $precioSalida, $notaMetacritic)
-  {
+  { // Metodo para añadir el juego
+
+    // Consulta para verificar si el videojuego ya existe
     $sql = "SELECT V.nombre FROM videojuegos AS V WHERE V.nombre = '$nombre'";
     $resultado = $conn->query($sql);
     if (!$resultado) {
@@ -93,6 +95,7 @@ class VideogameController
       return;
     }
 
+    // Inserción del nuevo videojuego si no existe
     $sql = "INSERT INTO videojuegos (nombre, genero, fechaLanzamiento, precioSalida, notaMetacritic)
             VALUES ('$nombre', '$genero', '$fechaLanzamiento', '$precioSalida', '$notaMetacritic')";
     if ($conn->query($sql)) {
@@ -128,6 +131,8 @@ class VideogameController
 
   private static function deleteGame($conn, $id)
   {
+
+    // Eliminación del videojuego en base a su ID
     $sql = "DELETE FROM videojuegos WHERE id = '$id'";
     $resultado = $conn->query($sql);
 
@@ -202,6 +207,7 @@ class VideogameController
       return;
     }
 
+    //Actualización de datos del videojuego
     $sql = "UPDATE videojuegos SET " . implode(", ", $fields) . " WHERE id = $id";
 
     if ($conn->query($sql) === TRUE) {

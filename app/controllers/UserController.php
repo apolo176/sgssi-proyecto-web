@@ -18,7 +18,7 @@ class UserController
     {
         include __DIR__ . '/../views/register.html';
     }
-    public static function processRegisterForm()
+    public static function processRegisterForm() // Metodo que procesa el formulario de registro
     {
         $hostname = "db";
         $username = "admin";
@@ -41,8 +41,10 @@ class UserController
         $conn->close();
     }
 
-    private static function register($conn, $nombreapellido, $dni, $telefono, $fecha, $email, $password)
+    private static function register($conn, $nombreapellido, $dni, $telefono, $fecha, $email, $password) //Metodo que registra el usuario en la base de datos si no existe
     {
+
+        // Consulta para verificar si el DNI ya existe
         $sql = "SELECT U.DNI FROM usuarios AS U WHERE U.DNI = '$dni'";
         $resultado = $conn->query($sql);
         if (!$resultado) {
@@ -58,6 +60,7 @@ class UserController
             return;
         }
 
+        // Consulta para verificar si el email ya existe
         $sql = "SELECT U.EMAIL FROM usuarios AS U WHERE U.EMAIL = '$email'";
         $resultado2 = $conn->query($sql);
         if (!$resultado2) {
@@ -73,6 +76,7 @@ class UserController
             return;
         }
 
+        // Inserción del nuevo usuario
         $stmt = $conn->prepare("
         INSERT INTO usuarios (nombre, dni, telefono, fechaNacimiento, email, contrasena)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -115,7 +119,7 @@ class UserController
     {
         include __DIR__ . '/../views/login.html';
     }
-    public static function processLoginForm()
+    public static function processLoginForm() // Metodo que procesa el formulario de login
     {
         $hostname = "db";
         $username = "admin";
@@ -142,7 +146,7 @@ class UserController
     }
 
 
-    private static function login($conn, $email, $password)
+    private static function login($conn, $email, $password) //Metodo que loguea el usuario si existe en la BD
     {
         $stmt = $conn->prepare("SELECT * FROM usuarios WHERE EMAIL = ?");
         $stmt->bind_param("s", $email);

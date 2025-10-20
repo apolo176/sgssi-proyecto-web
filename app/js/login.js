@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function submitForm(formulario) {
   const datos = new FormData(formulario);
 
-  if (!validateEmail(datos) || !validatePassword(datos)) return false;
+  if (!validateEmail(datos) || !validatePassword(datos)) return false; //Si no pasa las validaciones, no se envía el formulario
 
   fetch("/dologin", {
     method: "POST",
@@ -27,7 +27,7 @@ function submitForm(formulario) {
     .catch((error) => console.error("Error:", error));
 }
 
-function validateEmail(datos) {
+function validateEmail(datos) { //Método para validar el email
   const email = (datos.get("email") || "").trim();
 
   const expresionRegular = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; //Expresion regular que nos permite buscar un email válido
@@ -40,7 +40,7 @@ function validateEmail(datos) {
   return true;
 }
 
-function validatePassword(datos) {
+function validatePassword(datos) { //Método para validar la contraseña
   const password = (datos.get("password") || "").trim();
 
   if (password === "") {
