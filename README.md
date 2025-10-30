@@ -14,9 +14,9 @@ In general, we've used several technologies for the different aspects of the pro
 
 - JavaScript: Client logic features such as register validations.
 
-- PHP 8.1: Server backend logic features such us database queries.
+- PHP 8.4: Server backend logic features such us database queries.
 
-- MariaDB 10.8.2: Server information storage.
+- MariaDB 12.0.2: Server information storage.
 
 # 3. How to launch the project
 
