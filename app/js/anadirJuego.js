@@ -1,6 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
-  window.createProfileCircle()
+  window.createProfileCircle();
+
+  //Buscar el formulario en la página
+  const item_add_form = document.getElementById("item_add_form");
+
+  //Asegurarse de que el formulario exista en esta página
+  if (item_add_form) {
+
+    //Añadir el "escuchador" para el evento 'submit'
+    item_add_form.addEventListener("submit", (event) => {
+      event.preventDefault(); 
+
+
+      submitForm(event.target); 
+    });
+  }
 });
+
 function submitForm(formulario) {
   const datos = new FormData(formulario);
 

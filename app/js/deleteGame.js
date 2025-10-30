@@ -1,6 +1,26 @@
-document.addEventListener("DOMContentLoaded", () => {
-  window.createProfileCircle()
-})
+document.addEventListener('DOMContentLoaded', () => {
+  
+  //Buscar el botón de borrar
+  const deleteButton = document.getElementById('item_delete_submit');
+  
+  //Buscar el botón de cancelar
+  const cancelButton = document.getElementById('item_delete_cancel');
+
+  //Asignar la función deleteSubmit al clic del botón de borrar
+  if (deleteButton) {
+    deleteButton.addEventListener('click', () => {
+      deleteSubmit(); 
+    });
+  }
+
+  // Asignar la función deleteCancel al clic del botón de cancelar
+  if (cancelButton) {
+    cancelButton.addEventListener('click', () => {
+      deleteCancel();
+    });
+  }
+});
+
 async function deleteSubmit(){
    try {
             const params = new URLSearchParams(window.location.search);

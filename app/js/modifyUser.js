@@ -1,3 +1,5 @@
+
+
 let editUser;
 const params = new URLSearchParams(window.location.search);
 const id = params.get("user");
@@ -15,6 +17,8 @@ async function fetchUser() {
 document.addEventListener("DOMContentLoaded", async () => {
   window.createProfileCircle()
 
+  const alreadyHasAccount = document.getElementById("alreadyHasAccount");
+
   await fetchUser()
   const form = document.getElementById("user_modify_form");
 
@@ -29,9 +33,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Cambiamos el texto del botón
   const submitBtn = form.querySelector("#user_modify_submit");
   submitBtn.textContent = "Actualizar datos";
-  const alreadyHasAccount = document.getElementById("alreadyHasAccount");
-  alreadyHasAccount.style = "display:none";
+
+
+  //Asignar el evento 'submit' al formulario
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    submitForm(event.target); // event.target es el formulario
 });
+
+
 
 function submitForm(formulario) {
   const datos = new FormData(formulario);
@@ -186,3 +196,4 @@ function validateEmail(datos) {
 
   return true;
 }
+});

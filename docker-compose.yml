@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   web:
     build: .
@@ -12,7 +11,7 @@ services:
       - .:/var/www/html/  # Cambiado de ./app a . (raíz del proyecto)
 
   db:
-    image: mariadb:10.8.2
+    image: mariadb:12.0.2
     restart: always
     volumes:
       - ./mysql:/var/lib/mysql
@@ -25,7 +24,7 @@ services:
       - "8889:3306"
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
+    image: phpmyadmin/phpmyadmin:5.2.3
     links:
       - db
     ports:

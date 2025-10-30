@@ -251,6 +251,8 @@ button:hover {
     margin-top: 25px;
 }
 
+
+
 /* ======== Card de usuario ======== */
 .user-card {
     max-width: 450px;
@@ -433,6 +435,18 @@ main.containerDelete {
     padding: 2rem;
     border-radius: 12px;
     text-align: center;
+}
+
+/* ======== Aviso de eliminación de juego ======== */
+
+.delete-warning {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #e84118;
+}
+
+.hidden {
+  display: none;
 }
 
 /* ========== RESPONSIVE ========== */

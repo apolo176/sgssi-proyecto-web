@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   window.createProfileCircle()
 
+  const addButton = document.getElementById("addGame");
+  if (addButton) {
+    addButton.addEventListener("click", () => {
+      window.location.href = "/add_item";
+    });
+  }
+
   fetch("/showItems")
     .then((response) => {
       if (!response.ok) {

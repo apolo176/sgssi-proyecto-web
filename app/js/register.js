@@ -1,7 +1,23 @@
 const editUser = JSON.parse(localStorage.getItem("editUser"));
+
 document.addEventListener("DOMContentLoaded", () => {
-  window.createProfileCircle()
-})
+  window.createProfileCircle();
+
+  //Buscar el formulario en la página
+  const registerForm = document.getElementById("register_form");
+
+  //Asegurarse de que el formulario exista en esta página
+  if (registerForm) {
+    
+    //Añadir el "escuchador" para el evento 'submit'
+    registerForm.addEventListener("submit", (event) => {
+      event.preventDefault(); 
+
+
+      submitForm(event.target); 
+    });
+  }
+});
 
 function submitForm(formulario) {
   const datos = new FormData(formulario);

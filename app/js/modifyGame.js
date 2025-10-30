@@ -24,6 +24,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   form.fechaLanzamiento.value = editGame.fechaLanzamiento;
   form.notaMetacritic.value = editGame.notaMetacritic;
 
+  //Asignar el evento 'submit' al formulario
+  form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  submitForm(event.target); // event.target es el formulario
+
+  });
 });
 function submitForm(formulario) {
   const datos = new FormData(formulario);
