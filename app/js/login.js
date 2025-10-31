@@ -36,7 +36,7 @@ function submitForm(formulario) {
         // Redirigir a la home
         window.location.href = "/";
       } else {
-        window.alert("Email o contraseña incorrectos");
+        window.alert(`Error al iniciar sesión: ${data.message}`);
       }
     })
     .catch((error) => console.error("Error:", error));
