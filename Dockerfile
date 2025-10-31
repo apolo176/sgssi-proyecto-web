@@ -9,11 +9,18 @@ RUN a2enmod headers #Habilitar el módulo que permite añadir cabeceras HTTP
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Configurar Apache para procesar PHP
+# Reemplaza la línea "ServerTokens OS" por "ServerTokens Prod usando una expresión regular" para ocultar la información del SO
+RUN sed -i 's/^[ \t]*ServerTokens OS[ \t]*$/ServerTokens Prod/' /etc/apache2/conf-enabled/security.conf
+# Reemplaza la línea "ServerSignature On" por "ServerSignature Off" para ocultar la información de páginas de error
+RUN sed -i 's/^[ \t]*ServerSignature On[ \t]*$/ServerSignature Off/' /etc/apache2/conf-enabled/security.conf
+
 RUN echo "<VirtualHost *:80>" > /etc/apache2/sites-available/000-default.conf
 RUN echo "  ServerName localhost" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "  DocumentRoot /var/www/html" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "  <Directory /var/www/html>" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "  Header always set Content-Security-Policy \"default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';\"" >> /etc/apache2/sites-available/000-default.conf
+RUN echo "  Header always set X-Frame-Options \"SAMEORIGIN\"" >> /etc/apache2/sites-available/000-default.conf
+RUN echo "  Header unset X-Powered-By" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "    Options -Indexes +FollowSymLinks" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "    AllowOverride All" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "    Require all granted" >> /etc/apache2/sites-available/000-default.conf
