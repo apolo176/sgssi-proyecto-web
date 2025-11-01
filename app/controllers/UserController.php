@@ -44,9 +44,12 @@ class UserController
     private static function register($conn, $nombreapellido, $dni, $telefono, $fecha, $email, $password) //Metodo que registra el usuario en la base de datos si no existe
     {
 
-        // Consulta para verificar si el DNI ya existe
-        $sql = "SELECT U.DNI FROM usuarios AS U WHERE U.DNI = '$dni'";
-        $resultado = $conn->query($sql);
+        // Consulta para verificar si el DNI ya existe con statement preparado
+        $stmt = $conn->prepare("SELECT U.DNI FROM usuarios AS U WHERE U.DNI = ?");
+        $stmt->bind_param("s", $dni);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
         if (!$resultado) {
             echo "Error en la consulta SQL: " . $conn->error;
             return;
@@ -61,8 +64,10 @@ class UserController
         }
 
         // Consulta para verificar si el email ya existe
-        $sql = "SELECT U.EMAIL FROM usuarios AS U WHERE U.EMAIL = '$email'";
-        $resultado2 = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT U.EMAIL FROM usuarios AS U WHERE U.EMAIL = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $resultado2 = $stmt->get_result();
         if (!$resultado2) {
             echo "Error en la consulta SQL: " . $conn->error;
             return;
@@ -156,7 +161,7 @@ class UserController
         $WINDOW_SECONDS = 60;     // Duración de la ventana (en segundos)
         $now = time();
 
-        // 1️⃣ Buscar usuario
+        //Buscar usuario
         $stmt = $conn->prepare("SELECT * FROM usuarios WHERE EMAIL = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -173,7 +178,7 @@ class UserController
         $failedCount = (int)($row['login_fallidos'] ?? 0);
         $windowStart = $row['momento_login'] ? (int)$row['momento_login'] : null;
 
-        // 2️⃣ Reiniciar ventana si ha pasado más de 60 segundos
+        //Reiniciar ventana si ha pasado más de 60 segundos
         if ($windowStart === null || ($now - $windowStart) > $WINDOW_SECONDS) {
             $failedCount = 0;
             $windowStart = $now;
@@ -184,7 +189,7 @@ class UserController
             $update->close();
         }
 
-        // 3️⃣ Comprobar si ha superado el límite de intentos
+        //Comprobar si ha superado el límite de intentos
         if ($failedCount >= $MAX_ATTEMPTS && $windowStart !== null && ($now - $windowStart) < $WINDOW_SECONDS) {
             $wait = $WINDOW_SECONDS - ($now - $windowStart);
             echo json_encode([
@@ -205,9 +210,9 @@ class UserController
         }
 
 
-        // 4️⃣ Verificar contraseña
+        //Verificar contraseña
         if (password_verify($password, $row['contrasena'])) { // <-- VERIFICAR HASH
-            // ✅ Login correcto → resetear contadores
+            //Login correcto → resetear contadores
             $reset = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = NULL WHERE id = ?");
             $reset->bind_param("i", $userId);
             $reset->execute();
@@ -221,8 +226,8 @@ class UserController
                 ]
             ]);
         } else {
-            // ❌ Login fallido → incrementar contador
-            // ❌ Login fallido → incrementar contador
+            //Login fallido → incrementar contador
+            //Login fallido → incrementar contador
             $failedCount++;
             $windowStart = $now; // reiniciar el inicio del bloqueo al último fallo
 

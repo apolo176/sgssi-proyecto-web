@@ -21,6 +21,7 @@ RUN echo "  <Directory /var/www/html>" >> /etc/apache2/sites-available/000-defau
 RUN echo "  Header always set Content-Security-Policy \"default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';\"" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "  Header always set X-Frame-Options \"SAMEORIGIN\"" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "  Header unset X-Powered-By" >> /etc/apache2/sites-available/000-default.conf
+RUN echo "  Header always set X-Content-Type-Options \"nosniff\"" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "    Options -Indexes +FollowSymLinks" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "    AllowOverride All" >> /etc/apache2/sites-available/000-default.conf
 RUN echo "    Require all granted" >> /etc/apache2/sites-available/000-default.conf

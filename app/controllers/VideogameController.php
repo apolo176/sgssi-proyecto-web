@@ -82,9 +82,12 @@ class VideogameController
   private static function addgame($conn, $nombre, $genero, $fechaLanzamiento, $precioSalida, $notaMetacritic)
   { // Metodo para añadir el juego
 
-    // Consulta para verificar si el videojuego ya existe
-    $sql = "SELECT V.nombre FROM videojuegos AS V WHERE V.nombre = '$nombre'";
-    $resultado = $conn->query($sql);
+    // Consulta para verificar si el videojuego ya existe con prepared statement
+    $stmt = $conn->prepare("SELECT V.nombre FROM videojuegos AS V WHERE V.nombre = ?");
+    $stmt->bind_param("s", $nombre);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
     if (!$resultado) {
       echo "Error en la consulta SQL: " . $conn->error;
       return;
@@ -95,10 +98,11 @@ class VideogameController
       return;
     }
 
-    // Inserción del nuevo videojuego si no existe
-    $sql = "INSERT INTO videojuegos (nombre, genero, fechaLanzamiento, precioSalida, notaMetacritic)
-            VALUES ('$nombre', '$genero', '$fechaLanzamiento', '$precioSalida', '$notaMetacritic')";
-    if ($conn->query($sql)) {
+    // Inserción del nuevo videojuego si no existe con prepared statement
+    $stmt = $conn->prepare("INSERT INTO videojuegos (nombre, genero, fechaLanzamiento, precioSalida, notaMetacritic)
+            VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssdd", $nombre, $genero, $fechaLanzamiento, $precioSalida, $notaMetacritic);
+    if ($stmt->execute()) {
       echo "Registro hecho correctamente";
     } else {
       echo "Error al registrar videojuego: " . $conn->error;
@@ -133,8 +137,9 @@ class VideogameController
   {
 
     // Eliminación del videojuego en base a su ID
-    $sql = "DELETE FROM videojuegos WHERE id = '$id'";
-    $resultado = $conn->query($sql);
+    $stmt = $conn->prepare("DELETE FROM videojuegos WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $resultado = $stmt->execute();
 
     if (!$resultado) {
       echo "Error en la consulta SQL: " . $conn->error;
@@ -160,8 +165,11 @@ class VideogameController
     if ($conn->connect_error) die("Database connection failed: " . $conn->connect_error);
 
     $id = intval($id); // seguridad
-    $sql = "SELECT * FROM videojuegos WHERE id = $id";
-    $resultado = $conn->query($sql);
+
+    $stmt = $conn->prepare("SELECT * FROM videojuegos WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     if ($resultado && $row = $resultado->fetch_assoc()) {
       header('Content-Type: application/json');
@@ -208,16 +216,17 @@ class VideogameController
     }
 
     //Actualización de datos del videojuego
-    $sql = "UPDATE videojuegos SET " . implode(", ", $fields) . " WHERE id = $id";
+    $stmt = $conn->prepare("UPDATE videojuegos SET " . implode(", ", $fields) . " WHERE id = ?");
+    $stmt->bind_param("i", $id);
 
-    if ($conn->query($sql) === TRUE) {
-      if ($conn->affected_rows > 0) {
+    if ($stmt->execute() === TRUE) {
+      if ($stmt->affected_rows > 0) {
         echo "Videojuego modificado correctamente.";
       } else {
         echo "No se realizaron cambios.";
       }
     } else {
-      echo "Error al modificar videojuego: " . $conn->error;
+      echo "Error al modificar videojuego: " . $stmt->error;
     }
 
     $conn->close();
