@@ -11,103 +11,57 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
 -- Base de datos: `database`
---
 
 -- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `usuarios`
---
+-- --------------------------------------------------------
 
 CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
-  `usuario` text DEFAULT NULL,
-  `nombre` text NOT NULL,
-  `dni` text NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario` VARCHAR(50) DEFAULT NULL,
+  `nombre` VARCHAR(100) NOT NULL,
+  `dni` VARCHAR(20) NOT NULL,
   `telefono` int(8) NOT NULL,
   `fechaNacimiento` date NOT NULL,
-  `email` text NOT NULL,
-  `contrasena` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `email` VARCHAR(100) NOT NULL,
+  `contrasena` VARCHAR(255) NOT NULL,
+  `login_fallidos` int NOT NULL DEFAULT 0,
+  `momento_login` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=7;
 
---
 -- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `usuario`, `nombre`, `dni`, `telefono`, `fechaNacimiento`, `email`, `contrasena`) VALUES
-(1, '', 'mikel', '', 0, '0000-00-00', '', ''),
-(2, '', 'aitor', '', 0, '0000-00-00', '', '');
+INSERT INTO `usuarios` (`id`, `usuario`, `nombre`, `dni`, `telefono`, `fechaNacimiento`, `email`, `contrasena`, `login_fallidos`, `momento_login`) VALUES
+(1, '', 'mikel', '', 0, '0000-00-00', '', '', 0, NULL),
+(2, '', 'aitor', '', 0, '0000-00-00', '', '', 0, NULL);
 
 -- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `videojuegos`
---
+-- --------------------------------------------------------
 
 CREATE TABLE `videojuegos` (
-  `id` int(11) NOT NULL,
-  `nombre` text NOT NULL,
-  `genero` text NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(100) NOT NULL,
+  `genero` VARCHAR(50) NOT NULL,
   `fechaLanzamiento` date NOT NULL,
   `precioSalida` decimal(11,2) NOT NULL,
-  `notaMetacritic` decimal(4,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `notaMetacritic` decimal(4,2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=6;
 
---
 -- Volcado de datos para la tabla `videojuegos`
---
-
 INSERT INTO `videojuegos` (`id`, `nombre`, `genero`, `fechaLanzamiento`, `precioSalida`, `notaMetacritic`) VALUES
 (1, 'Minecraft', 'Sandbox', '2011-11-18', 19.95, 8.30),
 (2, 'Grand Theft Auto 5', 'Mundo abierto', '2013-09-17', 49.99, 8.50);
 
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `videojuegos`
---
-ALTER TABLE `videojuegos`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT de la tabla `videojuegos`
---
-ALTER TABLE `videojuegos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-
-ALTER TABLE usuarios
-ADD COLUMN login_fallidos INT NOT NULL DEFAULT 0,
-ADD COLUMN momento_login INT DEFAULT NULL;
-

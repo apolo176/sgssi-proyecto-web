@@ -77,11 +77,14 @@ class UserController
         }
 
         // Inserción del nuevo usuario
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // <-- HASH DE LA CONTRASEÑA
+
         $stmt = $conn->prepare("
         INSERT INTO usuarios (nombre, dni, telefono, fechaNacimiento, email, contrasena)
         VALUES (?, ?, ?, ?, ?, ?)
-    ");
-        $stmt->bind_param("ssssss", $nombreapellido, $dni, $telefono, $fecha, $email, $password);
+        ");
+        $stmt->bind_param("ssssss", $nombreapellido, $dni, $telefono, $fecha, $email, $hashedPassword); // <-- usamos el hash
+
 
         if ($stmt->execute()) {
             $newUserId = $conn->insert_id;
@@ -147,108 +150,107 @@ class UserController
 
 
     private static function login($conn, $email, $password)
-{
-    // --- CONFIGURACIÓN ---
-    $MAX_ATTEMPTS = 5;        // Intentos máximos por ventana
-    $WINDOW_SECONDS = 60;     // Duración de la ventana (en segundos)
-    $now = time();
+    {
+        // --- CONFIGURACIÓN ---
+        $MAX_ATTEMPTS = 5;        // Intentos máximos por ventana
+        $WINDOW_SECONDS = 60;     // Duración de la ventana (en segundos)
+        $now = time();
 
-    // 1️⃣ Buscar usuario
-    $stmt = $conn->prepare("SELECT * FROM usuarios WHERE EMAIL = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+        // 1️⃣ Buscar usuario
+        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE EMAIL = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if (!$row = $result->fetch_assoc()) {
-        // Usuario no encontrado → no sumamos intentos, solo mensaje genérico
-        echo json_encode(['success' => false, 'message' => 'Usuario o contraseña incorrectos.']);
-        $stmt->close();
-        return;
-    }
-
-    $userId = $row['id'];
-    $failedCount = (int)($row['login_failed_count'] ?? 0);
-    $windowStart = $row['login_window_start'] ? (int)$row['login_window_start'] : null;
-
-    // 2️⃣ Reiniciar ventana si ha pasado más de 60 segundos
-    if ($windowStart === null || ($now - $windowStart) > $WINDOW_SECONDS) {
-        $failedCount = 0;
-        $windowStart = $now;
-
-        $update = $conn->prepare("UPDATE usuarios SET login_failed_count = 0, login_window_start = ? WHERE id = ?");
-        $update->bind_param("ii", $windowStart, $userId);
-        $update->execute();
-        $update->close();
-    }
-
-    // 3️⃣ Comprobar si ha superado el límite de intentos
-    if ($failedCount >= $MAX_ATTEMPTS && $windowStart !== null && ($now - $windowStart) < $WINDOW_SECONDS) {
-        $wait = $WINDOW_SECONDS - ($now - $windowStart);
-        echo json_encode([
-            'success' => false,
-            'message' => "Demasiados intentos fallidos. Espera {$wait} segundos antes de volver a intentarlo."
-        ]);
-        $stmt->close();
-        return;
-    }
-
-    if ($failedCount >= $MAX_ATTEMPTS && ($now - $windowStart) >= $WINDOW_SECONDS) {
-        $failedCount = 0;
-        $windowStart = null;
-        $reset = $conn->prepare("UPDATE usuarios SET login_failed_count = 0, login_window_start = NULL WHERE id = ?");
-        $reset->bind_param("i", $userId);
-        $reset->execute();
-        $reset->close();
-    }
-
-
-    // 4️⃣ Verificar contraseña
-    if (trim($password) === trim($row['contrasena'])) {
-        // ✅ Login correcto → resetear contadores
-        $reset = $conn->prepare("UPDATE usuarios SET login_failed_count = 0, login_window_start = NULL WHERE id = ?");
-        $reset->bind_param("i", $userId);
-        $reset->execute();
-        $reset->close();
-
-        echo json_encode([
-            'success' => true,
-            'user' => [
-                'id' => $row['id'],
-                'nombre' => $row['nombre']
-            ]
-        ]);
-    } else {
-        // ❌ Login fallido → incrementar contador
-        // ❌ Login fallido → incrementar contador
-        $failedCount++;
-        $windowStart = $now; // reiniciar el inicio del bloqueo al último fallo
-
-        $update = $conn->prepare("UPDATE usuarios SET login_failed_count = ?, login_window_start = ? WHERE id = ?");
-        $update->bind_param("iii", $failedCount, $windowStart, $userId);
-        $update->execute();
-        $update->close();
-
-        // Calcular intentos restantes
-        $remaining = $MAX_ATTEMPTS - $failedCount;
-
-        // Si ya llegó o superó el límite, mostrar mensaje de bloqueo directamente
-        if ($remaining <= 0) {
-            echo json_encode([
-                'success' => false,
-                'message' => "Demasiados intentos fallidos. Espera {$WINDOW_SECONDS} segundos antes de volver a intentarlo."
-            ]);
-        } else {
-            // Mostrar mensaje de intentos restantes
-            echo json_encode([
-                'success' => false,
-                'message' => "Usuario o contraseña incorrectos. Te quedan {$remaining} intento" . ($remaining === 1 ? "" : "s") . " antes del bloqueo."
-            ]);
+        if (!$row = $result->fetch_assoc()) {
+            // Usuario no encontrado → no sumamos intentos, solo mensaje genérico
+            echo json_encode(['success' => false, 'message' => 'Usuario o contraseña incorrectos.']);
+            $stmt->close();
+            return;
         }
 
-    }
+        $userId = $row['id'];
+        $failedCount = (int)($row['login_fallidos'] ?? 0);
+        $windowStart = $row['momento_login'] ? (int)$row['momento_login'] : null;
 
-    $stmt->close();
-}
+        // 2️⃣ Reiniciar ventana si ha pasado más de 60 segundos
+        if ($windowStart === null || ($now - $windowStart) > $WINDOW_SECONDS) {
+            $failedCount = 0;
+            $windowStart = $now;
+
+            $update = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = ? WHERE id = ?");
+            $update->bind_param("ii", $windowStart, $userId);
+            $update->execute();
+            $update->close();
+        }
+
+        // 3️⃣ Comprobar si ha superado el límite de intentos
+        if ($failedCount >= $MAX_ATTEMPTS && $windowStart !== null && ($now - $windowStart) < $WINDOW_SECONDS) {
+            $wait = $WINDOW_SECONDS - ($now - $windowStart);
+            echo json_encode([
+                'success' => false,
+                'message' => "Demasiados intentos fallidos. Espera {$wait} segundos antes de volver a intentarlo."
+            ]);
+            $stmt->close();
+            return;
+        }
+
+        if ($failedCount >= $MAX_ATTEMPTS && ($now - $windowStart) >= $WINDOW_SECONDS) {
+            $failedCount = 0;
+            $windowStart = null;
+            $reset = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = NULL WHERE id = ?");
+            $reset->bind_param("i", $userId);
+            $reset->execute();
+            $reset->close();
+        }
+
+
+        // 4️⃣ Verificar contraseña
+        if (password_verify($password, $row['contrasena'])) { // <-- VERIFICAR HASH
+            // ✅ Login correcto → resetear contadores
+            $reset = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = NULL WHERE id = ?");
+            $reset->bind_param("i", $userId);
+            $reset->execute();
+            $reset->close();
+
+            echo json_encode([
+                'success' => true,
+                'user' => [
+                    'id' => $row['id'],
+                    'nombre' => $row['nombre']
+                ]
+            ]);
+        } else {
+            // ❌ Login fallido → incrementar contador
+            // ❌ Login fallido → incrementar contador
+            $failedCount++;
+            $windowStart = $now; // reiniciar el inicio del bloqueo al último fallo
+
+            $update = $conn->prepare("UPDATE usuarios SET login_fallidos = ?, momento_login = ? WHERE id = ?");
+            $update->bind_param("iii", $failedCount, $windowStart, $userId);
+            $update->execute();
+            $update->close();
+
+            // Calcular intentos restantes
+            $remaining = $MAX_ATTEMPTS - $failedCount;
+
+            // Si ya llegó o superó el límite, mostrar mensaje de bloqueo directamente
+            if ($remaining <= 0) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => "Demasiados intentos fallidos. Espera {$WINDOW_SECONDS} segundos antes de volver a intentarlo."
+                ]);
+            } else {
+                // Mostrar mensaje de intentos restantes
+                echo json_encode([
+                    'success' => false,
+                    'message' => "Usuario o contraseña incorrectos. Te quedan {$remaining} intento" . ($remaining === 1 ? "" : "s") . " antes del bloqueo."
+                ]);
+            }
+        }
+
+        $stmt->close();
+    }
 
     /*-------------------------------User Details--------------------------------- */
     public static function showDetails()
