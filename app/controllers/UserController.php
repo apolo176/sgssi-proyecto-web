@@ -227,7 +227,6 @@ class UserController
             ]);
         } else {
             //Login fallido → incrementar contador
-            //Login fallido → incrementar contador
             $failedCount++;
             $windowStart = $now; // reiniciar el inicio del bloqueo al último fallo
 
