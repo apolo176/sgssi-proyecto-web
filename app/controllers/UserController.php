@@ -20,6 +20,8 @@ class UserController
     }
     public static function processRegisterForm() // Metodo que procesa el formulario de registro
     {
+        session_start(); //Iniciar sesión
+
         $hostname = "db";
         $username = "admin";
         $password = "test";
@@ -100,6 +102,9 @@ class UserController
             $result = $stmt->get_result();
 
             if ($user = $result->fetch_assoc()) {
+                $_SESSION['user_id'] = $user['id']; //Guardar ID de usuario en sesión
+                $_SESSION['logged_in'] = true;     //Marcar como usuario autenticado
+
                 echo json_encode([
                     'success' => true,
                     'message' => 'Registro hecho correctamente',
