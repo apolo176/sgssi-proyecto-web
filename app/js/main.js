@@ -3,38 +3,69 @@ document.addEventListener("DOMContentLoaded", () => {
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   if (usuario) {
-    // Mostrar opciones de usuario en el menú
-    menu.innerHTML = `
-            <li><a href="/items">🎮 Ver todos los videojuegos</a></li>
-            <li><a href="/add_item">➕ Añadir un nuevo videojuego</a></li>
-            <li><a href="/show_user?user=${usuario.id}">⚙️ Modificar mis datos</a></li>
-            <li><a href="#" class="logout" id="logoutMain">🚪 Cerrar sesión</a></li>
+    menu.innerHTML = "";
 
-        `;
+    const links = [
+      { href: "/items", text: "🎮 Ver todos los videojuegos" },
+      { href: "/add_item", text: "➕ Añadir un nuevo videojuego" },
+      { href: `/show_user?user=${usuario.id}`, text: "⚙️ Modificar mis datos" },
+      { href: "#", text: "🚪 Cerrar sesión", id: "logoutMain", class: "logout" }
+    ];
 
-    // Crear el círculo de usuario
-    const inicial = usuario.nombre?.charAt(0).toUpperCase() || "U";
-    userArea.innerHTML = `
-            <div class="user-circle" id="userCircle">${inicial}</div>
-            <div class="user-menu" id="userMenu">
-                <a href="/" id="home">🏠 Home</a>
+    links.forEach(linkData => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
 
-                <a href="/show_user?user=${usuario.id}">👤 ${usuario.nombre}</a>
+      a.href = linkData.href;
+      a.textContent = linkData.text;
 
-                <a href="#" class="logout" id="logout">🚪 Cerrar sesión</a>
-            </div>
-        `;
+      if (linkData.id) a.id = linkData.id;
+      if (linkData.class) a.className = linkData.class;
 
+      li.appendChild(a);
+      menu.appendChild(li);
+    });
+
+    userArea.innerHTML = ""; // limpiar
     const userCircle = document.getElementById("userCircle");
     const userMenu = document.getElementById("userMenu");
     const logoutLinks = document.querySelectorAll(".logout");
+    const inicial = usuario.nombre?.charAt(0).toUpperCase() || "U";
 
-    // Toggle del menú al hacer clic en el círculo
+    const circle = document.createElement("div");
+    circle.className = "user-circle";
+    circle.id = "userCircle";
+    circle.textContent = inicial;
+
+    userMenu.className = "user-menu";
+    userMenu.id = "userMenu";
+
+    // Enlaces del user menu
+    const userLinks = [
+      { href: "/", text: "🏠 Home", id: "home" },
+      { href: `/show_user?user=${usuario.id}`, text: `👤 ${usuario.nombre}` },
+      { href: "#", text: "🚪 Cerrar sesión", id: "logout", class: "logout" }
+    ];
+
+    userLinks.forEach(linkData => {
+      const a = document.createElement("a");
+      a.href = linkData.href;
+      a.textContent = linkData.text;
+
+      if (linkData.id) a.id = linkData.id;
+      if (linkData.class) a.className = linkData.class;
+
+      userMenu.appendChild(a);
+    });
+
+    userArea.appendChild(circle);
+    userArea.appendChild(userMenu);
+
+
     userCircle.addEventListener("click", () => {
       userMenu.classList.toggle("active");
     });
 
-    // Cerrar sesión
     logoutLinks.forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -44,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Cerrar el menú si se hace clic fuera
     document.addEventListener("click", (e) => {
       if (!userArea.contains(e.target)) {
         userMenu.classList.remove("active");

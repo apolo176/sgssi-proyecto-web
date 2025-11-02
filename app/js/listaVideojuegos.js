@@ -28,21 +28,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
       data.forEach((juego) => {
         const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${juego.id}</td>
-          <td><a href="/show_item?item=${juego.id}">${juego.nombre}</a></td>
-          <td>${juego.fechaLanzamiento}</td>
-          <td>${juego.precioSalida}</td>
-          <td>${juego.notaMetacritic}</td>
-          <td>
-            <a href="/show_item?item=${juego.id}" class="detalle-btn">👁️</a>
-            <a href="/modify_item?item=${juego.id}" class="detalle-btn">✏️</a>
-            <a href="/delete_item?item=${juego.id}" class="detalle-btn">❌</a>
 
-          </td>`;
+        const tdId = document.createElement("td");
+        tdId.textContent = juego.id;
+
+        const tdNombre = document.createElement("td");
+        const linkNombre = document.createElement("a");
+        linkNombre.textContent = juego.nombre;
+        linkNombre.href = `/show_item?item=${juego.id}`;
+        tdNombre.appendChild(linkNombre);
+
+        const tdFecha = document.createElement("td");
+        tdFecha.textContent = juego.fechaLanzamiento;
+
+        const tdPrecio = document.createElement("td");
+        tdPrecio.textContent = juego.precioSalida;
+
+        const tdNota = document.createElement("td");
+        tdNota.textContent = juego.notaMetacritic;
+
+        const tdAcciones = document.createElement("td");
+
+        const btnVer = document.createElement("a");
+        btnVer.href = `/show_item?item=${juego.id}`;
+        btnVer.textContent = "👁️";
+        btnVer.className = "detalle-btn";
+
+        const btnEditar = document.createElement("a");
+        btnEditar.href = `/modify_item?item=${juego.id}`;
+        btnEditar.textContent = "✏️";
+        btnEditar.className = "detalle-btn";
+
+        const btnBorrar = document.createElement("a");
+        btnBorrar.href = `/delete_item?item=${juego.id}`;
+        btnBorrar.textContent = "❌";
+        btnBorrar.className = "detalle-btn";
+
+        tdAcciones.append(btnVer, btnEditar, btnBorrar);
+
+        fila.append(tdId, tdNombre, tdFecha, tdPrecio, tdNota, tdAcciones);
         tbody.appendChild(fila);
       });
-
       document.querySelectorAll(".borrar-btn").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
           try {

@@ -45,19 +45,48 @@ document.addEventListener("DOMContentLoaded", () => {
       userCard.innerHTML = `<p>Error al cargar los datos del usuario.</p>`;
     });
 
-  // 5️⃣ Función para renderizar el usuario
-  function renderUser(usuario) {
-    userCard.innerHTML = `
-      <h2>${usuario.nombre}</h2>
-      <p><strong>Email:</strong> ${usuario.email}</p>
-      <p><strong>DNI:</strong> ${usuario.dni}</p>
-      <p><strong>Teléfono:</strong> ${usuario.telefono}</p>
-      <p><strong>Fecha de nacimiento:</strong> ${usuario.fechaNacimiento}</p>
-      <button class="btn modify">Modificar datos</button>
-    `;
 
-    const modifyBtn = userCard.querySelector(".modify");
-    modifyBtn.addEventListener("click", () => {
+  function renderUser(usuario) {
+    // Limpiar contenido previo
+    userCard.innerHTML = "";
+
+    // Crear elementos
+    const name = document.createElement("h2");
+    name.textContent = usuario.nombre;
+
+    const email = document.createElement("p");
+    email.innerHTML = `<strong>Email:</strong> `;
+    const emailSpan = document.createElement("span");
+    emailSpan.textContent = usuario.email;
+    email.appendChild(emailSpan);
+
+    const dni = document.createElement("p");
+    dni.innerHTML = `<strong>DNI:</strong> `;
+    const dniSpan = document.createElement("span");
+    dniSpan.textContent = usuario.dni;
+    dni.appendChild(dniSpan);
+
+    const tel = document.createElement("p");
+    tel.innerHTML = `<strong>Teléfono:</strong> `;
+    const telSpan = document.createElement("span");
+    telSpan.textContent = usuario.telefono;
+    tel.appendChild(telSpan);
+
+    const birth = document.createElement("p");
+    birth.innerHTML = `<strong>Fecha de nacimiento:</strong> `;
+    const birthSpan = document.createElement("span");
+    birthSpan.textContent = usuario.fechaNacimiento;
+    birth.appendChild(birthSpan);
+
+    const button = document.createElement("button");
+    button.className = "btn modify";
+    button.textContent = "Modificar datos";
+
+    // Añadir al contenedor
+    userCard.append(name, email, dni, tel, birth, button);
+
+    // Evento del botón
+    button.addEventListener("click", () => {
       localStorage.setItem("editUser", JSON.stringify(usuario));
       window.location.href = `/modify_user?user=${usuario.id}`;
     });
