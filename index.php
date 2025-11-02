@@ -29,6 +29,13 @@ $router->addRoute('/dologin', function () {
     $controller = new UserController();
     $controller->processLoginForm();
 });
+
+/*---------LOGOUT ROUTE -----------*/
+$router->addRoute('/logout', function () {
+    $controller = new UserController();
+    $controller->processLogout();
+});
+
 /*---------USER ROUTES -----------*/
 $router->addRoute('/show_user', function () {
     $controller = new UserController();

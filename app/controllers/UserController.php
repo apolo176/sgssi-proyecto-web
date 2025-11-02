@@ -261,9 +261,44 @@ class UserController
         $stmt->close();
     }
 
+        /*-------------------------------User Logout--------------------------------- */
+    public static function processLogout()
+    {
+        //Iniciar el motor de sesiones para poder acceder a la sesión
+        session_start();
+
+        //Vaciar todas las variables de la sesión
+        session_unset();
+
+        //Destruir la sesión por completo del servidor
+        session_destroy();
+
+        //Borrar la cookie de sesión del navegador
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+
+        header("Location: /login");
+        exit;
+    }
+
     /*-------------------------------User Details--------------------------------- */
     public static function showDetails()
     {
+        header("Cache-Control: no-cache, no-store, must-revalidate"); // Evitar caché
+        header("Pragma: no-cache");
+        header("Expires: 0"); // Fecha de expiración en el pasado
+
+        session_start(); //Iniciar sesión
+
+        if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
+            header('Location: /login');
+            exit;
+        }
         include __DIR__ . '/../views/userDetails.html';
     }
     public function showUserData($user)
@@ -303,6 +338,17 @@ class UserController
     /*-------------------------------User Details--------------------------------- */
     public function showModifyForm()
     {
+        header("Cache-Control: no-cache, no-store, must-revalidate"); // Evitar caché
+        header("Pragma: no-cache");
+        header("Expires: 0"); // Fecha de expiración en el pasado
+
+        session_start(); //Iniciar sesión
+
+        if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
+            header('Location: /login');
+            exit;
+        }
+
         include __DIR__ . '/../views/modifyUser.html';
     }
     public function modifyUser($payload)

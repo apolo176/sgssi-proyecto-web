@@ -6,10 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const id = params.get("user");
   if (!id) return;
 
-  // 1️⃣ Intentamos obtener usuario del localStorage
+  //Intentamos obtener usuario del localStorage
   const localUser = JSON.parse(localStorage.getItem("usuario"));
 
-  // 2️⃣ Si NO hay usuario logueado, no dejamos avanzar
+  // Si NO hay usuario logueado, no dejamos avanzar
   if (!localUser) {
     userCard.innerHTML = `
       <p>No hay ningún usuario logueado.</p>
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 3️⃣ Verificamos que el ID del localStorage coincida con el de la URL
+  //Verificamos que el ID del localStorage coincida con el de la URL
   if (localUser.id !== Number(id)) {
     userCard.innerHTML = `
       <p>No tienes permisos para ver este perfil.</p>
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 4️⃣ Si todo está bien, pedimos los datos completos al servidor
+  //Si todo está bien, pedimos los datos completos al servidor
   fetch(`/getUserData?user=${id}`)
     .then((res) => res.json())
     .then((usuario) => {

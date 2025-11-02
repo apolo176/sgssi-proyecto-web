@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const alreadyHasAccount = document.getElementById("alreadyHasAccount");
 
+  alreadyHasAccount.style.display = "none";
+
   await fetchUser()
   const form = document.getElementById("user_modify_form");
 

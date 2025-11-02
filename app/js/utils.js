@@ -27,7 +27,8 @@ window.createProfileCircle = function () {
       e.preventDefault();
       localStorage.removeItem("usuario");
       localStorage.removeItem("editUser");
-      window.location.reload();
+      //window.location.reload();
+      window.location.href = "/logout";
     });
 
     // Cerrar el menú si se hace clic fuera
