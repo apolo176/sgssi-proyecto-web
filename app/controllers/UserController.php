@@ -129,6 +129,8 @@ class UserController
     }
     public static function processLoginForm() // Metodo que procesa el formulario de login
     {
+        session_start(); //Iniciar sesión
+
         $hostname = "db";
         $username = "admin";
         $password = "test";
@@ -212,6 +214,9 @@ class UserController
 
         //Verificar contraseña
         if (password_verify($password, $row['contrasena'])) { // <-- VERIFICAR HASH
+            $_SESSION['user_id'] = $row['id']; //Guardar ID de usuario en sesión
+            $_SESSION['logged_in'] = true; //Marcar como usuario autenticado
+
             //Login correcto → resetear contadores
             $reset = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = NULL WHERE id = ?");
             $reset->bind_param("i", $userId);
@@ -263,26 +268,36 @@ class UserController
     }
     public function showUserData($user)
     {
-        if (!$user) {
-            echo json_encode(null);
+        session_start(); //Iniciar sesión
+
+        if (!isset($_SESSION['user_id'])) { //Verificar si el usuario está autenticado
+            header('HTTP/1.1 401 Unauthorized'); //Código de estado 401 porque no está autenticado
+            echo json_encode(['error' => 'No autenticado']);
             return;
         }
+
+        $user_id_seguro = $_SESSION['user_id'];
 
         $conn = new mysqli("db", "admin", "test", "database");
         if ($conn->connect_error)
             die("Database connection failed: " . $conn->connect_error);
 
-        $user = intval($user); // seguridad
-        $sql = "SELECT * FROM usuarios WHERE id = $user";
-        $resultado = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->bind_param("i", $user_id_seguro);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
 
         if ($resultado && $row = $resultado->fetch_assoc()) {
+            unset($row['contrasena']); //No enviar la contraseña
+            unset($row['login_fallidos']); //No enviar el número de intentos fallidos
+            unset($row['momento_login']); //No enviar el momento del último intento de login
             header('Content-Type: application/json');
             echo json_encode($row);
         } else {
             echo json_encode(null);
         }
 
+        $stmt->close();
         $conn->close();
     }
     /*-------------------------------User Details--------------------------------- */
@@ -292,11 +307,23 @@ class UserController
     }
     public function modifyUser($payload)
     {
+        session_start(); //Iniciar sesión
+
+        if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
+            header('HTTP/1.1 401 Unauthorized');
+            echo "Error: No autorizado";
+            return;
+        }
+
+        $user_id_seguro = $_SESSION["user_id"]; //Obtener el ID del usuario autenticado
 
         if (!$payload || !is_array($payload)) {
             echo "Datos inválidos o incompletos";
             return;
         }
+
+        unset($payload['id']); //Evitar que el usuario modifique el ID
+        unset($payload['contrasena']); //Evitar que el usuario modifique la contraseña aquí
 
         // Si no hay campos modificados, salimos
         if (empty($payload)) {
@@ -322,7 +349,7 @@ class UserController
         }
 
         $sql = "UPDATE usuarios SET " . implode(", ", $updates) . " WHERE id = ?";
-        $params[] = $payload['id'];
+        $params[] = $user_id_seguro;
         $types .= 's';
 
         $stmt = $conn->prepare($sql);
