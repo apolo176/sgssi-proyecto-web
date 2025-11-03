@@ -1,3 +1,4 @@
+<?php header('Content-Type: text/html; charset=UTF-8'); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -25,6 +26,9 @@
 
             <label>Contraseña:</label>
             <input type="password" name="password" placeholder="Introduce tu contraseña">
+
+            <?php $t = htmlspecialchars($csrf_token ?? '', ENT_QUOTES, 'UTF-8'); ?>
+            <input type="hidden" name="csrf_token" value="<?php echo substr($t, 0, 32) . substr($t, 32); ?>" maxlength="128">
 
             <button type="submit">Iniciar sesión</button>
         </form>

@@ -17,11 +17,40 @@ class UserController
     /* -------------------------------- REGISTER --------------------------- */
     public static function showRegister()
     {
-        include __DIR__ . '/../views/register.html';
-    }
+        self::startSecureSession();
+
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        $csrf_token = $_SESSION['csrf_token'];
+        include __DIR__ . '/../views/register.php';
+        }
+
     public static function processRegisterForm() // Metodo que procesa el formulario de registro
     {
-        session_start(); //Iniciar sesión
+        self::startSecureSession();
+
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!is_string($token) || !preg_match('/^[a-f0-9]{64}$/i', $token)) {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['success' => false, 'message' => 'CSRF token inválido o malformado']);
+            exit;
+        }
+        if (!hash_equals($_SESSION['csrf_token'], $token)) {
+            header('HTTP/1.1 403 Forbidden');
+            echo json_encode(['success' => false, 'message' => 'CSRF token inválido o ausente']);
+            exit;
+        }
+
+        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+            header('HTTP/1.1 403 Forbidden');
+            echo json_encode([
+                'success' => false,
+                'message' => 'CSRF token inválido o ausente'
+            ]);
+            exit;
+        }
 
         $hostname = "db";
         $username = "admin";
@@ -59,6 +88,8 @@ class UserController
         }
 
         if ($resultado->num_rows > 0) {
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode([
                 'success' => false,
                 'message' => 'El DNI ya está registrado'
@@ -77,6 +108,8 @@ class UserController
         }
 
         if ($resultado2->num_rows > 0) {
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode([
                 'success' => false,
                 'message' => 'El correo ya está registrado'
@@ -102,6 +135,8 @@ class UserController
             $stmt->execute();
             $result = $stmt->get_result();
 
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             if ($user = $result->fetch_assoc()) {
                 $_SESSION['user_id'] = $user['id']; //Guardar ID de usuario en sesión
                 $_SESSION['logged_in'] = true;     //Marcar como usuario autenticado
@@ -111,6 +146,7 @@ class UserController
                     'message' => 'Registro hecho correctamente',
                     'user' => $user
                 ]);
+                unset($_POST['csrf_token']);
             } else {
                 echo json_encode([
                     'success' => true,
@@ -118,6 +154,8 @@ class UserController
                 ]);
             }
         } else {
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode([
                 'success' => false,
                 'message' => 'Error al registrar usuario: ' . $conn->error
@@ -130,12 +168,47 @@ class UserController
 
     /*-------------------------------LOGIN--------------------------------- */
     public static function showLogin()
-    {
-        include __DIR__ . '/../views/login.html';
+    {   
+        self::startSecureSession();
+
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        $csrf_token = $_SESSION['csrf_token'];
+        include __DIR__ . '/../views/login.php';
     }
+
     public static function processLoginForm() // Metodo que procesa el formulario de login
-    {
-        session_start(); //Iniciar sesión
+    {   
+        self::startSecureSession();
+
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!is_string($token) || !preg_match('/^[a-f0-9]{64}$/i', $token)) {
+            header('HTTP/1.1 400 Bad Request');
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            echo json_encode(['success' => false, 'message' => 'CSRF token inválido o malformado']);
+            exit;
+        }
+        if (!hash_equals($_SESSION['csrf_token'], $token)) {
+            header('HTTP/1.1 403 Forbidden');
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            echo json_encode(['success' => false, 'message' => 'CSRF token inválido o ausente']);
+            exit;
+        }
+
+        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+            header('HTTP/1.1 403 Forbidden');
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            echo json_encode([
+                'success' => false,
+                'message' => 'CSRF token inválido o ausente'
+            ]);
+            exit;
+        }
 
         $hostname = "db";
         $username = "admin";
@@ -177,6 +250,8 @@ class UserController
 
         if (!$row = $result->fetch_assoc()) {
             // Usuario no encontrado → no sumamos intentos, solo mensaje genérico
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode(['success' => false, 'message' => 'Usuario o contraseña incorrectos.']);
             $stmt->close();
             return;
@@ -200,6 +275,8 @@ class UserController
         //Comprobar si ha superado el límite de intentos
         if ($failedCount >= $MAX_ATTEMPTS && $windowStart !== null && ($now - $windowStart) < $WINDOW_SECONDS) {
             $wait = $WINDOW_SECONDS - ($now - $windowStart);
+            unset($_SESSION['csrf_token']);
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode([
                 'success' => false,
                 'message' => "Demasiados intentos fallidos. Espera {$wait} segundos antes de volver a intentarlo."
@@ -220,8 +297,11 @@ class UserController
 
         //Verificar contraseña
         if (password_verify($password, $row['contrasena'])) { // <-- VERIFICAR HASH
+            session_regenerate_id(true);
+            unset($_SESSION['csrf_token']);
             $_SESSION['user_id'] = $row['id']; //Guardar ID de usuario en sesión
             $_SESSION['logged_in'] = true; //Marcar como usuario autenticado
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
             //Login correcto → resetear contadores
             $reset = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = NULL WHERE id = ?");
@@ -236,6 +316,7 @@ class UserController
                     'nombre' => $row['nombre']
                 ]
             ]);
+            unset($_POST['csrf_token']);
         } else {
             //Login fallido → incrementar contador
             $failedCount++;
@@ -252,12 +333,16 @@ class UserController
             // Si ya llegó o superó el límite, mostrar mensaje de bloqueo directamente
             if ($remaining <= 0) {
                 self::logFailedLogin($email, "Ha llegado al limite de intentos fallidos.");
+                unset($_SESSION['csrf_token']);
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 echo json_encode([
                     'success' => false,
                     'message' => "Demasiados intentos fallidos. Espera {$WINDOW_SECONDS} segundos antes de volver a intentarlo."
                 ]);
             } else {
-            // Mostrar mensaje de intentos restantes
+                // Mostrar mensaje de intentos restantes
+                unset($_SESSION['csrf_token']);
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 echo json_encode([
                     'success' => false,
                     'message' => "Usuario o contraseña incorrectos. Te quedan {$remaining} intento" . ($remaining === 1 ? "" : "s") . " antes del bloqueo."
@@ -270,9 +355,9 @@ class UserController
 
         /*-------------------------------User Logout--------------------------------- */
     public static function processLogout()
-    {
+    {   
         //Iniciar el motor de sesiones para poder acceder a la sesión
-        session_start();
+        self::startSecureSession();
 
         //Vaciar todas las variables de la sesión
         session_unset();
@@ -289,6 +374,8 @@ class UserController
             );
         }
 
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
         header("Location: /login");
         exit;
     }
@@ -300,7 +387,11 @@ class UserController
         header("Pragma: no-cache");
         header("Expires: 0"); // Fecha de expiración en el pasado
 
-        session_start(); //Iniciar sesión
+        self::startSecureSession();
+
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Token único
+        }
 
         if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
             header('Location: /login');
@@ -310,7 +401,11 @@ class UserController
     }
     public function showUserData($user)
     {
-        session_start(); //Iniciar sesión
+        self::startSecureSession();
+
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Token único
+        }
 
         if (!isset($_SESSION['user_id'])) { //Verificar si el usuario está autenticado
             header('HTTP/1.1 401 Unauthorized'); //Código de estado 401 porque no está autenticado
@@ -349,7 +444,9 @@ class UserController
         header("Pragma: no-cache");
         header("Expires: 0"); // Fecha de expiración en el pasado
 
-        session_start(); //Iniciar sesión
+        self::startSecureSession();
+
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
         if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
             header('Location: /login');
@@ -360,7 +457,9 @@ class UserController
     }
     public function modifyUser($payload)
     {
-        session_start(); //Iniciar sesión
+        self::startSecureSession();
+
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
         if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
             header('HTTP/1.1 401 Unauthorized');
@@ -422,23 +521,39 @@ class UserController
         $stmt->close();
         $conn->close();
     }
-
-/*-------------------------------Log de usuarios con login fallido--------------------------------- */
-private static function logFailedLogin($username, $reason) 
-{
-    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] 
-          ?? $_SERVER['REMOTE_ADDR'] 
-          ?? 'desconocida';
-
-    $fecha2 = date("Y-m-d H:i:s");
-    $log = "[$fecha2] Usuario: $username | IP: $ip | Motivo: $reason\n";
-
-    $file = dirname(__DIR__) . '/logs/failed_logins.txt';
-    if (!file_exists(dirname($file))) {
-        mkdir(dirname($file), 0755, true);
+    private static function startSecureSession()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_set_cookie_params([
+                'lifetime' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => isset($_SERVER['HTTPS']), // Usa true automáticamente si hay HTTPS
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+            ini_set('session.cookie_httponly', 1);
+            ini_set('session.cookie_samesite', 'Lax');
+            session_start();
+        }
     }
 
-    file_put_contents($file, $log, FILE_APPEND);
+/*-------------------------------Log de usuarios con login fallido--------------------------------- */
+    private static function logFailedLogin($username, $reason) 
+    {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] 
+            ?? $_SERVER['REMOTE_ADDR'] 
+            ?? 'desconocida';
+
+        $fecha2 = date("Y-m-d H:i:s");
+        $log = "[$fecha2] Usuario: $username | IP: $ip | Motivo: $reason\n";
+
+        $file = dirname(__DIR__) . '/logs/failed_logins.txt';
+        if (!file_exists(dirname($file))) {
+            mkdir(dirname($file), 0755, true);
+        }
+
+        file_put_contents($file, $log, FILE_APPEND);
+    }
 }
 
-}

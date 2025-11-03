@@ -1,3 +1,4 @@
+<?php header('Content-Type: text/html; charset=UTF-8'); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -37,6 +38,9 @@
 
             <label>Email:</label>
             <input name="email" type="text" placeholder="tuemail@dominio.com">
+
+            <?php $t = htmlspecialchars($csrf_token ?? '', ENT_QUOTES, 'UTF-8'); ?>
+            <input type="hidden" name="csrf_token" value="<?php echo substr($t, 0, 32) . substr($t, 32); ?>" maxlength="128">
 
             <button id="register_submit" type="submit">📝 Registrarse</button>
         </form>
