@@ -9,6 +9,7 @@ services:
       - db
     volumes:
       - .:/var/www/html/  # Cambiado de ./app a . (raíz del proyecto)
+    command: bash -c "chmod -R 777 /var/www/html/app/logs && apache2-foreground"
 
   db:
     image: mariadb:12.0.2

@@ -1,0 +1,5 @@
+[2025-11-03 21:46:06] Usuario: 1@gmail.com | IP: 172.18.0.1 | Motivo: Ha llegado al limite de intentos fallidos.
+[2025-11-03 22:35:30] Usuario: 1@gmail.com | IP: 172.18.0.1 | Motivo: Ha llegado al límite de intentos fallidos.
+[2025-11-03 22:38:03] Usuario: 2@gmail.com | IP: 172.18.0.1 | Motivo: Ha llegado al límite de intentos fallidos.
+[2025-11-03 23:09:39] Usuario: 1@gmail.com | IP: 172.18.0.1 | Motivo: Ha llegado al límite de intentos fallidos.
+[2025-11-03 23:11:29] Usuario: 1@gmail.com | IP: 172.18.0.1 | Motivo: Ha llegado al límite de intentos fallidos.
