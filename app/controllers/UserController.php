@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+date_default_timezone_set('Europe/Madrid');
 function dd(...$vars)
 {
     foreach ($vars as $v) {
@@ -250,12 +251,13 @@ class UserController
 
             // Si ya llegó o superó el límite, mostrar mensaje de bloqueo directamente
             if ($remaining <= 0) {
+                self::logFailedLogin($email, "Ha llegado al limite de intentos fallidos.");
                 echo json_encode([
                     'success' => false,
                     'message' => "Demasiados intentos fallidos. Espera {$WINDOW_SECONDS} segundos antes de volver a intentarlo."
                 ]);
             } else {
-                // Mostrar mensaje de intentos restantes
+            // Mostrar mensaje de intentos restantes
                 echo json_encode([
                     'success' => false,
                     'message' => "Usuario o contraseña incorrectos. Te quedan {$remaining} intento" . ($remaining === 1 ? "" : "s") . " antes del bloqueo."
@@ -420,4 +422,23 @@ class UserController
         $stmt->close();
         $conn->close();
     }
+
+/*-------------------------------Log de usuarios con login fallido--------------------------------- */
+private static function logFailedLogin($username, $reason) 
+{
+    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] 
+          ?? $_SERVER['REMOTE_ADDR'] 
+          ?? 'desconocida';
+
+    $fecha2 = date("Y-m-d H:i:s");
+    $log = "[$fecha2] Usuario: $username | IP: $ip | Motivo: $reason\n";
+
+    $file = dirname(__DIR__) . '/logs/failed_logins.txt';
+    if (!file_exists(dirname($file))) {
+        mkdir(dirname($file), 0755, true);
+    }
+
+    file_put_contents($file, $log, FILE_APPEND);
+}
+
 }
