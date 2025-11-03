@@ -77,6 +77,11 @@ function submitForm(formulario) {
     .then((data) => {
       window.alert(data); // Mensaje del PHP (por ejemplo, "Registro hecho correctamente")
       window.location.href = "/";
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      if (usuario && cambios.nombre) {
+        usuario.nombre = cambios.nombre;
+        localStorage.setItem("usuario", JSON.stringify(usuario));
+      }
     })
     .catch((error) => console.error("Error:", error));
 }
