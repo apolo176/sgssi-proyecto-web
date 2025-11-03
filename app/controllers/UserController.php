@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 date_default_timezone_set('Europe/Madrid');
-function dd(...$vars)
-{
+
+function dd(...$vars) {
     foreach ($vars as $v) {
         echo "<pre>";
         var_dump($v);
@@ -11,25 +11,25 @@ function dd(...$vars)
     }
     die();
 }
+
 class UserController
 {
-
     /* -------------------------------- REGISTER --------------------------- */
-    public static function showRegister()
-    {
+    public static function showRegister() {
         self::startSecureSession();
-
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
         $csrf_token = $_SESSION['csrf_token'];
         include __DIR__ . '/../views/register.php';
-        }
+    }
 
-    public static function processRegisterForm() // Metodo que procesa el formulario de registro
-    {
+    public static function processRegisterForm() {
         self::startSecureSession();
 
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
 
         $token = $_POST['csrf_token'] ?? '';
         if (!is_string($token) || !preg_match('/^[a-f0-9]{64}$/i', $token)) {
@@ -40,15 +40,6 @@ class UserController
         if (!hash_equals($_SESSION['csrf_token'], $token)) {
             header('HTTP/1.1 403 Forbidden');
             echo json_encode(['success' => false, 'message' => 'CSRF token inválido o ausente']);
-            exit;
-        }
-
-        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-            header('HTTP/1.1 403 Forbidden');
-            echo json_encode([
-                'success' => false,
-                'message' => 'CSRF token inválido o ausente'
-            ]);
             exit;
         }
 
@@ -73,80 +64,46 @@ class UserController
         $conn->close();
     }
 
-    private static function register($conn, $nombreapellido, $dni, $telefono, $fecha, $email, $password) //Metodo que registra el usuario en la base de datos si no existe
-    {
-
-        // Consulta para verificar si el DNI ya existe con statement preparado
+    private static function register($conn, $nombreapellido, $dni, $telefono, $fecha, $email, $password) {
         $stmt = $conn->prepare("SELECT U.DNI FROM usuarios AS U WHERE U.DNI = ?");
         $stmt->bind_param("s", $dni);
         $stmt->execute();
         $resultado = $stmt->get_result();
-
-        if (!$resultado) {
-            echo "Error en la consulta SQL: " . $conn->error;
-            return;
-        }
-
         if ($resultado->num_rows > 0) {
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            echo json_encode([
-                'success' => false,
-                'message' => 'El DNI ya está registrado'
-            ]);
+            echo json_encode(['success' => false, 'message' => 'El DNI ya está registrado']);
             return;
         }
 
-        // Consulta para verificar si el email ya existe
         $stmt = $conn->prepare("SELECT U.EMAIL FROM usuarios AS U WHERE U.EMAIL = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $resultado2 = $stmt->get_result();
-        if (!$resultado2) {
-            echo "Error en la consulta SQL: " . $conn->error;
-            return;
-        }
-
         if ($resultado2->num_rows > 0) {
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            echo json_encode([
-                'success' => false,
-                'message' => 'El correo ya está registrado'
-            ]);;
+            echo json_encode(['success' => false, 'message' => 'El correo ya está registrado']);
             return;
         }
 
-        // Inserción del nuevo usuario
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // <-- HASH DE LA CONTRASEÑA
-
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("
-        INSERT INTO usuarios (nombre, dni, telefono, fechaNacimiento, email, contrasena)
-        VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO usuarios (nombre, dni, telefono, fechaNacimiento, email, contrasena)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param("ssssss", $nombreapellido, $dni, $telefono, $fecha, $email, $hashedPassword); // <-- usamos el hash
-
+        $stmt->bind_param("ssssss", $nombreapellido, $dni, $telefono, $fecha, $email, $hashedPassword);
 
         if ($stmt->execute()) {
             $newUserId = $conn->insert_id;
-
             $stmt = $conn->prepare("SELECT id, nombre, email, dni, telefono, fechaNacimiento FROM usuarios WHERE id = ?");
             $stmt->bind_param("i", $newUserId);
             $stmt->execute();
             $result = $stmt->get_result();
-
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             if ($user = $result->fetch_assoc()) {
-                $_SESSION['user_id'] = $user['id']; //Guardar ID de usuario en sesión
-                $_SESSION['logged_in'] = true;     //Marcar como usuario autenticado
-
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['logged_in'] = true;
                 echo json_encode([
                     'success' => true,
                     'message' => 'Registro hecho correctamente',
                     'user' => $user
                 ]);
-                unset($_POST['csrf_token']);
             } else {
                 echo json_encode([
                     'success' => true,
@@ -154,59 +111,35 @@ class UserController
                 ]);
             }
         } else {
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al registrar usuario: ' . $conn->error
-            ]);
+            echo json_encode(['success' => false, 'message' => 'Error al registrar usuario: ' . $conn->error]);
         }
     }
 
-
-
-
-    /*-------------------------------LOGIN--------------------------------- */
-    public static function showLogin()
-    {   
+    /*------------------------------- LOGIN --------------------------------- */
+    public static function showLogin() {
         self::startSecureSession();
-
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
         $csrf_token = $_SESSION['csrf_token'];
         include __DIR__ . '/../views/login.php';
     }
 
-    public static function processLoginForm() // Metodo que procesa el formulario de login
-    {   
+    public static function processLoginForm() {
         self::startSecureSession();
-
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
 
         $token = $_POST['csrf_token'] ?? '';
         if (!is_string($token) || !preg_match('/^[a-f0-9]{64}$/i', $token)) {
             header('HTTP/1.1 400 Bad Request');
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode(['success' => false, 'message' => 'CSRF token inválido o malformado']);
             exit;
         }
         if (!hash_equals($_SESSION['csrf_token'], $token)) {
             header('HTTP/1.1 403 Forbidden');
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode(['success' => false, 'message' => 'CSRF token inválido o ausente']);
-            exit;
-        }
-
-        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-            header('HTTP/1.1 403 Forbidden');
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            echo json_encode([
-                'success' => false,
-                'message' => 'CSRF token inválido o ausente'
-            ]);
             exit;
         }
 
@@ -224,7 +157,6 @@ class UserController
 
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
-
         if (empty($email) || empty($password)) {
             echo "Por favor completa todos los campos.";
             return;
@@ -234,24 +166,16 @@ class UserController
         $conn->close();
     }
 
-
-    private static function login($conn, $email, $password)
-    {
-        // --- CONFIGURACIÓN ---
-        $MAX_ATTEMPTS = 5;        // Intentos máximos por ventana
-        $WINDOW_SECONDS = 60;     // Duración de la ventana (en segundos)
+    private static function login($conn, $email, $password) {
+        $MAX_ATTEMPTS = 5;
+        $WINDOW_SECONDS = 60;
         $now = time();
 
-        //Buscar usuario
         $stmt = $conn->prepare("SELECT * FROM usuarios WHERE EMAIL = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
-
         if (!$row = $result->fetch_assoc()) {
-            // Usuario no encontrado → no sumamos intentos, solo mensaje genérico
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode(['success' => false, 'message' => 'Usuario o contraseña incorrectos.']);
             $stmt->close();
             return;
@@ -261,22 +185,17 @@ class UserController
         $failedCount = (int)($row['login_fallidos'] ?? 0);
         $windowStart = $row['momento_login'] ? (int)$row['momento_login'] : null;
 
-        //Reiniciar ventana si ha pasado más de 60 segundos
         if ($windowStart === null || ($now - $windowStart) > $WINDOW_SECONDS) {
             $failedCount = 0;
             $windowStart = $now;
-
             $update = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = ? WHERE id = ?");
             $update->bind_param("ii", $windowStart, $userId);
             $update->execute();
             $update->close();
         }
 
-        //Comprobar si ha superado el límite de intentos
         if ($failedCount >= $MAX_ATTEMPTS && $windowStart !== null && ($now - $windowStart) < $WINDOW_SECONDS) {
             $wait = $WINDOW_SECONDS - ($now - $windowStart);
-            unset($_SESSION['csrf_token']);
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             echo json_encode([
                 'success' => false,
                 'message' => "Demasiados intentos fallidos. Espera {$wait} segundos antes de volver a intentarlo."
@@ -285,250 +204,58 @@ class UserController
             return;
         }
 
-        if ($failedCount >= $MAX_ATTEMPTS && ($now - $windowStart) >= $WINDOW_SECONDS) {
-            $failedCount = 0;
-            $windowStart = null;
-            $reset = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = NULL WHERE id = ?");
-            $reset->bind_param("i", $userId);
-            $reset->execute();
-            $reset->close();
-        }
-
-
-        //Verificar contraseña
-        if (password_verify($password, $row['contrasena'])) { // <-- VERIFICAR HASH
+        if (password_verify($password, $row['contrasena'])) {
             session_regenerate_id(true);
-            unset($_SESSION['csrf_token']);
-            $_SESSION['user_id'] = $row['id']; //Guardar ID de usuario en sesión
-            $_SESSION['logged_in'] = true; //Marcar como usuario autenticado
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['logged_in'] = true;
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-            //Login correcto → resetear contadores
             $reset = $conn->prepare("UPDATE usuarios SET login_fallidos = 0, momento_login = NULL WHERE id = ?");
             $reset->bind_param("i", $userId);
             $reset->execute();
             $reset->close();
 
-            echo json_encode([
-                'success' => true,
-                'user' => [
-                    'id' => $row['id'],
-                    'nombre' => $row['nombre']
-                ]
-            ]);
-            unset($_POST['csrf_token']);
+            echo json_encode(['success' => true, 'user' => ['id' => $row['id'], 'nombre' => $row['nombre']]]);
         } else {
-            //Login fallido → incrementar contador
             $failedCount++;
-            $windowStart = $now; // reiniciar el inicio del bloqueo al último fallo
-
+            $windowStart = $now;
             $update = $conn->prepare("UPDATE usuarios SET login_fallidos = ?, momento_login = ? WHERE id = ?");
             $update->bind_param("iii", $failedCount, $windowStart, $userId);
             $update->execute();
             $update->close();
 
-            // Calcular intentos restantes
             $remaining = $MAX_ATTEMPTS - $failedCount;
-
-            // Si ya llegó o superó el límite, mostrar mensaje de bloqueo directamente
             if ($remaining <= 0) {
-                self::logFailedLogin($email, "Ha llegado al limite de intentos fallidos.");
-                unset($_SESSION['csrf_token']);
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                echo json_encode([
-                    'success' => false,
-                    'message' => "Demasiados intentos fallidos. Espera {$WINDOW_SECONDS} segundos antes de volver a intentarlo."
-                ]);
+                self::logFailedLogin($email, "Ha llegado al límite de intentos fallidos.");
+                echo json_encode(['success' => false, 'message' => "Demasiados intentos fallidos. Espera {$WINDOW_SECONDS} segundos antes de volver a intentarlo."]);
             } else {
-                // Mostrar mensaje de intentos restantes
-                unset($_SESSION['csrf_token']);
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                echo json_encode([
-                    'success' => false,
-                    'message' => "Usuario o contraseña incorrectos. Te quedan {$remaining} intento" . ($remaining === 1 ? "" : "s") . " antes del bloqueo."
-                ]);
+                echo json_encode(['success' => false, 'message' => "Usuario o contraseña incorrectos. Te quedan {$remaining} intento" . ($remaining === 1 ? "" : "s") . " antes del bloqueo."]);
             }
         }
-
         $stmt->close();
     }
 
-        /*-------------------------------User Logout--------------------------------- */
-    public static function processLogout()
-    {   
-        //Iniciar el motor de sesiones para poder acceder a la sesión
+    /*------------------------------- LOGOUT --------------------------------- */
+    public static function processLogout() {
         self::startSecureSession();
-
-        //Vaciar todas las variables de la sesión
         session_unset();
-
-        //Destruir la sesión por completo del servidor
         session_destroy();
-
-        //Borrar la cookie de sesión del navegador
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
+            setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
         }
-
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
         header("Location: /login");
         exit;
     }
 
-    /*-------------------------------User Details--------------------------------- */
-    public static function showDetails()
-    {
-        header("Cache-Control: no-cache, no-store, must-revalidate"); // Evitar caché
-        header("Pragma: no-cache");
-        header("Expires: 0"); // Fecha de expiración en el pasado
-
-        self::startSecureSession();
-
-        if (empty($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Token único
-        }
-
-        if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
-            header('Location: /login');
-            exit;
-        }
-        include __DIR__ . '/../views/userDetails.html';
-    }
-    public function showUserData($user)
-    {
-        self::startSecureSession();
-
-        if (empty($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Token único
-        }
-
-        if (!isset($_SESSION['user_id'])) { //Verificar si el usuario está autenticado
-            header('HTTP/1.1 401 Unauthorized'); //Código de estado 401 porque no está autenticado
-            echo json_encode(['error' => 'No autenticado']);
-            return;
-        }
-
-        $user_id_seguro = $_SESSION['user_id'];
-
-        $conn = new mysqli("db", "admin", "test", "database");
-        if ($conn->connect_error)
-            die("Database connection failed: " . $conn->connect_error);
-
-        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE id = ?");
-        $stmt->bind_param("i", $user_id_seguro);
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-
-        if ($resultado && $row = $resultado->fetch_assoc()) {
-            unset($row['contrasena']); //No enviar la contraseña
-            unset($row['login_fallidos']); //No enviar el número de intentos fallidos
-            unset($row['momento_login']); //No enviar el momento del último intento de login
-            header('Content-Type: application/json');
-            echo json_encode($row);
-        } else {
-            echo json_encode(null);
-        }
-
-        $stmt->close();
-        $conn->close();
-    }
-    /*-------------------------------User Details--------------------------------- */
-    public function showModifyForm()
-    {
-        header("Cache-Control: no-cache, no-store, must-revalidate"); // Evitar caché
-        header("Pragma: no-cache");
-        header("Expires: 0"); // Fecha de expiración en el pasado
-
-        self::startSecureSession();
-
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
-        if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
-            header('Location: /login');
-            exit;
-        }
-
-        include __DIR__ . '/../views/modifyUser.html';
-    }
-    public function modifyUser($payload)
-    {
-        self::startSecureSession();
-
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
-        if (!isset($_SESSION["user_id"])) { //Verificar si el usuario está autenticado
-            header('HTTP/1.1 401 Unauthorized');
-            echo "Error: No autorizado";
-            return;
-        }
-
-        $user_id_seguro = $_SESSION["user_id"]; //Obtener el ID del usuario autenticado
-
-        if (!$payload || !is_array($payload)) {
-            echo "Datos inválidos o incompletos";
-            return;
-        }
-
-        unset($payload['id']); //Evitar que el usuario modifique el ID
-        unset($payload['contrasena']); //Evitar que el usuario modifique la contraseña aquí
-
-        // Si no hay campos modificados, salimos
-        if (empty($payload)) {
-            echo "No hay campos para actualizar";
-            return;
-        }
-
-        $conn = new mysqli("db", "admin", "test", "database");
-        if ($conn->connect_error) {
-            echo "Error de conexión: " . $conn->connect_error;
-            return;
-        }
-
-        // Construcción dinámica del UPDATE
-        $updates = [];
-        $params = [];
-        $types = '';
-
-        foreach ($payload as $col => $val) {
-            $updates[] = "$col = ?";
-            $params[] = $val;
-            $types .= 's';
-        }
-
-        $sql = "UPDATE usuarios SET " . implode(", ", $updates) . " WHERE id = ?";
-        $params[] = $user_id_seguro;
-        $types .= 's';
-
-        $stmt = $conn->prepare($sql);
-        if (!$stmt) {
-            echo "Error preparando la consulta: " . $conn->error;
-            return;
-        }
-
-        $stmt->bind_param($types, ...$params);
-
-        if ($stmt->execute()) {
-            echo "Datos actualizados correctamente";
-        } else {
-            echo "Error al actualizar los datos: " . $stmt->error;
-        }
-
-        $stmt->close();
-        $conn->close();
-    }
-    private static function startSecureSession()
-    {
+    /*------------------------------- UTIL --------------------------------- */
+    private static function startSecureSession() {
         if (session_status() === PHP_SESSION_NONE) {
             session_set_cookie_params([
                 'lifetime' => 0,
                 'path' => '/',
                 'domain' => '',
-                'secure' => isset($_SERVER['HTTPS']), // Usa true automáticamente si hay HTTPS
+                'secure' => isset($_SERVER['HTTPS']),
                 'httponly' => true,
                 'samesite' => 'Lax'
             ]);
@@ -538,12 +265,10 @@ class UserController
         }
     }
 
-/*-------------------------------Log de usuarios con login fallido--------------------------------- */
-    private static function logFailedLogin($username, $reason) 
-    {
+    private static function logFailedLogin($username, $reason) {
         $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] 
-            ?? $_SERVER['REMOTE_ADDR'] 
-            ?? 'desconocida';
+                ?? $_SERVER['REMOTE_ADDR'] 
+                ?? 'desconocida';
 
         $fecha2 = date("Y-m-d H:i:s");
         $log = "[$fecha2] Usuario: $username | IP: $ip | Motivo: $reason\n";
@@ -556,4 +281,3 @@ class UserController
         file_put_contents($file, $log, FILE_APPEND);
     }
 }
-
