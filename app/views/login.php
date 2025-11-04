@@ -19,7 +19,7 @@
         <input type="text" name="email" placeholder="Introduce tu email">
         <label>Contraseña:</label>
         <input type="password" name="password" placeholder="Introduce tu contraseña">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '', ENT_QUOTES, 'UTF-8') ?>" maxlength="128">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '', ENT_QUOTES, 'UTF-8') ?>" maxlength="128"> <!-- Token CSRF -->
         <button type="submit">Iniciar sesión</button>
     </form>
     <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>

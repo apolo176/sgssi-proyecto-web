@@ -41,7 +41,7 @@ RUN echo "<?php echo 'PHP IS WORKING! Version: ' . phpversion(); ?>" > /var/www/
 
 # Establecer permisos
 RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 777 /var/www/html/app/logs
+RUN mkdir -p /var/www/html/app/logs && chmod -R 777 /var/www/html/app/logs
 
 EXPOSE 80
 CMD ["apache2-foreground"]

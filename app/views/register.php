@@ -27,7 +27,7 @@
         <input name="fechanac" type="text" placeholder="aaaa-mm-dd">
         <label>Email:</label>
         <input name="email" type="text" placeholder="tuemail@dominio.com">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '', ENT_QUOTES, 'UTF-8') ?>" maxlength="128">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '', ENT_QUOTES, 'UTF-8') ?>" maxlength="128"> <!-- Token CSRF -->
         <button id="register_submit" type="submit">📝 Registrarse</button>
     </form>
     <p id="alreadyHasAccount">¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a></p>
