@@ -45,9 +45,9 @@ $ cd sgssi-proyecto-web.git
 ```bash
 $ git checkout entrega_3
 ```
-5. Deploy the project using Docker Compose in detached mode (in background mode):
+5. Build and deploy the project using Docker Compose in detached mode (in background mode):
 ```bash
-$ docker compose up -d
+$ docker compose up -d --build
 ```
 6. The project should have already been deployed successfully. If you want to stop it use the next command:
 ```bash
