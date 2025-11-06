@@ -41,9 +41,9 @@ $ git clone https://github.com/apolo176/sgssi-proyecto-web.git
 ```bash
 $ cd sgssi-proyecto-web.git
 ```
-4. Move to "entrega_1" branch:
+4. Move to "entrega_3" branch:
 ```bash
-$ git checkout entrega_1
+$ git checkout entrega_3
 ```
 5. Deploy the project using Docker Compose in detached mode (in background mode):
 ```bash
