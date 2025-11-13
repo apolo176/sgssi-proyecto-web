@@ -12,7 +12,7 @@ Se han usado 4 programas extra además de ZAP para llevar acabo el ataque:
 
 - *sqlmap*: Ataques mediante inyección SQL
 
-- *OWASP DirBuster*: 
+- *OWASP DirBuster*: Ataque mediante diccionario y fuerza bruta
 
 - *hydra*:
 
@@ -28,6 +28,17 @@ sudo snap install sqlmap
 Ya está instalado. *sqlmap* se utiliza mediante la terminal, no tiene interfaz gráfica.
 
 ### 2. *OWASP DirBuster*
+
+Descomprimir DirBuster-1.0-RC1.zip de la carpeta Ataque_Web
+
+Moverte al directorio:
+```bash
+cd DirBuster-1.0-RC1/
+```
+Ejecutar el siguiente comando:
+```bash
+./DirBuster-1.0-RC1.sh
+```
 
 ### 3. *hydra*
 Abrir una terminal de Linux e introducir el siguiente comando:
