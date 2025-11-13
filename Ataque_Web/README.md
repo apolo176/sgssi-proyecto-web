@@ -30,6 +30,10 @@ Ya está instalado. *sqlmap* se utiliza mediante la terminal, no tiene interfaz 
 ### 2. *OWASP DirBuster*
 
 ### 3. *hydra*
+Abrir una terminal de Linux e introducir el siguiente comando:
+```bash
+sudo apt install hydra
+```
 
 ### 4. *Burp Suite*
 
