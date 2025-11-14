@@ -49,10 +49,11 @@ sudo apt install hydra
 ### 4. *Burp Suite*
 
 Acceder a la web https://portswigger.net/burp/documentation/desktop/getting-started/download-and-install .
-Elija la opcion "Community Edition". Elija el sistema operativo en el que se instalará el programa. Una vez descargado, en Linux, ejecutar el archivo.sh para instalar el programa:
+Elije la opcion "Community Edition". Elije el sistema operativo en el que se instalará el programa. Una vez descargado, en Linux, ejecuta el archivo.sh para instalar el programa:
 ```bash
 ./archivo.sh
 ```
+Sige los pasos de instalación del programa.
 
 En distribuciones como Kali Linux el programa esta instalado por defecto.
 
@@ -67,6 +68,7 @@ En distribuciones como Kali Linux el programa esta instalado por defecto.
 - Alex Isasi
 
 - Iker Ciordia
+
 
 
 
